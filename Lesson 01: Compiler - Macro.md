@@ -86,7 +86,7 @@ int main()
     return 0;
 }
 ~~~
-Ta sử dụng các dấu "\" để liên kết giữa các hàng\
+Ta sử dụng các dấu "\\" để liên kết giữa các hàng\
 Kết quả ta được
 ~~~
 Đây là macro nhân 2 biến bất kì
