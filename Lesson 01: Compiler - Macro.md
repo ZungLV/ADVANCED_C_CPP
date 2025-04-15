@@ -21,6 +21,20 @@ Quá trình Preprocessor (tiền xử lý) là bước đầu tiên trong quá t
   #define PI 3.14
   // --> Sau tiền xử lý: mọi PI sẽ thành 3.14
   ~~~
+  Để chạy giai đoạn tiền xử lý (preprocessing) trong quá trình biên dịch với GCC của VSCODE ta sử dụng lệnh như sau
+  ~~~
+  gcc -E main.c -o main.i
+  ~~~
+  
+  Trong đó
+  + gcc: Gọi trình biên dịch GCC
+
+  + -E: Chỉ thực hiện bước tiền xử lý, không biên dịch, không liên kết
+
+  + main.c: Tệp mã nguồn C đầu vào
+
+  + -o main.i: Ghi kết quả đầu ra vào tệp main.i
+
   Các file .c sau quá trình tiền xử lý sẽ tạo thành các file .i chứa mã nguồn đã được xử lý.\
 Vd: main.c và test.c sẽ tạo thành main.i và test.i
   ![Screenshot 2025-04-14 211343](https://github.com/user-attachments/assets/5d93f4ee-42bb-41b4-a399-b46ffebba92f)
@@ -28,15 +42,69 @@ Vd: main.c và test.c sẽ tạo thành main.i và test.i
 ### 1.2 Compiler
 
 Ở quá trình compiler, file .i được tạo ra ở quá trình preprocessor sẽ được sử dụng để tạo file .s (file này chứa ngôn ngữ assembly một ngôn ngữ bậc thấp). Assembly (hợp ngữ) giúp thao tác trên RAM mượt mà hiệu quả hơn.\
+
+Thực hiện bước biên dịch (compilation) và xuất ra mã hợp ngữ (assembly), sài lệnh cụ thể là:
+~~~
+gcc -S main.i -o main.s
+~~~
+
+Trong đó
++ gcc:	Gọi trình biên dịch GCC
+  
++ -S:	Viết tắt của "Assembly only" – chỉ dịch mã nguồn thành mã hợp ngữ
+  
++ main.i:	File đầu vào – mã C đã qua tiền xử lý
+  
++ -o main.s:	Tên file đầu ra chứa mã hợp ngữ
+
 Vd: main.i và test.i sẽ tạo thành main.s và test.s
+
+![Screenshot 2025-04-15 220543](https://github.com/user-attachments/assets/af7f6cd7-702a-4f4e-9412-f7e85cd22370)
+
 ### 1.3 Asembler
 
 Quá trình này sẽ tổng hợp file .s thành file .o (file này chứa mã nhị phân là ngôn ngữ máy).\
+
+Để biên dịch mã hợp ngữ (assembly) thành mã máy (object code), ta sài lệnh cụ thể như sau
+
+~~~
+gcc -c main.s -o main.o
+~~~
+
+Trong đó
++ gcc:	Gọi trình biên dịch GCC
+
++ -c:	Compile only – chỉ biên dịch, không liên kết
+
++ main.s:	File mã hợp ngữ đầu vào (được tạo từ gcc -S)
+
++ -o main.o:	Xuất kết quả ra file object (.o)
+
 Vd: main.s và test.s sẽ tạo thành main.o và test.o
+![Screenshot 2025-04-15 220630](https://github.com/user-attachments/assets/8ce5f730-9e9c-4045-8ebf-7fc035943c47)
+
 ### 1.4 Linker
 
 Linker là quá trình cuối cùng, tất cả các file .o sẽ được liên kết để tạo ra một file .exe cuối cùng và đây cũng là file thực thi code.\
-Vd: main.o liên kết với test.o tạo thành main.exe
+
+Thực hiện giai đoạn liên kết (linking), cụ thể là lệnh
+~~~
+gcc main.o test.o -o main
+~~~
+
+Trong đó
++ gcc:	Gọi trình biên dịch GCC
+
++ main.o test.o:	Các file object (.o) – đã được biên dịch
+
++ -o main:	Đặt tên cho file thực thi đầu ra là main
+
+Vd: main.o liên kết với test.o tạo thành main.exe mà ta có thể chạy với lệnh
+~~~
+./main
+~~~
+![Screenshot 2025-04-15 220655](https://github.com/user-attachments/assets/90484a32-c616-4d94-8085-2cb1126a3765)
+
 ## 2. Macro
 Macros là từ hay chỉ thị dùng để chỉ những thông tin được xử lý ở quá trình tiền xử lý.\
 Macros chia làm 3 nhóm chính:\
@@ -175,8 +243,8 @@ ADVANCED_C
 
 ### Macro Variadic 
 
-+Là một dạng macro cho phép nhận một số lượng biến tham số có thể thay đổi.
-+Giúp định nghĩa các macro có thể xử lý một lượng biến đầu vào khác nhau
++ Là một dạng macro cho phép nhận một số lượng biến tham số có thể thay đổi.
++ Giúp định nghĩa các macro có thể xử lý một lượng biến đầu vào khác nhau
 
 ~~~
 #define MACRO_NAME(...) __VA_ARGS__  // __VA_ARGS__ sẽ tự hiểu là những biến trong ...
