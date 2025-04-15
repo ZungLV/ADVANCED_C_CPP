@@ -151,10 +151,10 @@ Sau khi preprocessor ta sẽ được hai biến mới là var1 và var2 đượ
 
 ~~~
 #include <stdio.h>
-#define CREAT_STRING(txt) print(#txt) // hàm in ra bất cứ văn bản nào được đặt trong hàm
+#define CREATE_STRING(txt) print(#txt) // hàm in ra bất cứ văn bản nào được đặt trong hàm
 int main()
 {
-    CREAT_STRING(ADVANCED_C) // hàm này sẽ trả về print("ADVANCED_C)
+    CREATE_STRING(ADVANCED_C) // hàm này sẽ trả về print("ADVANCED_C)
     return 0;
 }
 ~~~
