@@ -92,6 +92,46 @@ Kết quả ta được
 Đây là macro nhân 2 biến bất kì
 Kết quả: 20
 ~~~
+### Sử dụng undef để hủy định nghĩa
+Để hủy định nghĩa đã được lập sẵn, ta có thể sử dụng #undef
+~~~
+// Hủy định nghĩa YEAR và định nghĩa lại YEAR
+#define YEAR 2024
+#undef YEAR
+#define YEAR 2025
+~~~
+### Chỉ thị biên dịch có điều kiện (#if, #elif, #else)
++ #if sử dụng để bắt đầu một điều kiện tiền xử lý.
++ Nếu điều kiện trong #if là đúng, các dòng mã nguồn sau #if sẽ được biên dịch
++ Nếu sai, các dòng mã nguồn sẽ bị bỏ qua đến khi gặp #endif
++ #elif dùng để thêm một điều kiện mới khi điều kiện trước đó trong #if hoặc #elif là sai
++ #else dùng khi không có điều kiện nào ở trên đúng.
+~~~
+#define TRAFFIC_LIGHT GREEN
+
+// Ứng với mỗi 1 màu của đèn giao thông mà ta sẽ có hiệu lệnh riêng
+
+#if TRAFFIC_LIGHT == GREEN
+    printf("Được chạy\n");
+#elif TRAFFIC_LIGHT == RED
+    printf("Dừng lại\n");
+#elif TRAFFIC_LIGHT == YELLOW
+    printf("Chạy chậm\n");
+#else 
+    printf("Đèn không hợp lệ\n");
+#endif
+~~~
+### Chỉ thị biên dịch có điều kiện (#ifdef, #ifndef)
++ #ifdef dùng để kiểm tra một macro đã được định nghĩa hay chưa, nếu macro đã được định nghĩa thì mã nguồn sau #ifdef sẽ được biên dịch.
++ #ifndef dùng để kiểm tra một macro đã được định nghĩa hay chưa, nếu macro chưa được định nghĩa thì mã nguồn sau #ifndef sẽ được biên dịch.
++ Khi sử dụng chỉ thị biên dịch có điều kiện, các file header phải viết hoa hết toàn bộ. Vd: File test.h sẽ được viết thành __TEST_H
+~~~
+#ifndef __TEST_H
+#define __TEST_H
+
+#endif
+~~~
+Cú pháp trên giúp định nghĩa lại macro nếu chưa được định nghĩa, nhờ vậy mà tránh lỗi do khai báo thư viện nhiều lần.
 ### 2. Toán tử trong macro
 ### Toán tử ## để nối các chuỗi
 ~~~
