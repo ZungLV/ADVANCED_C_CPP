@@ -21,12 +21,22 @@ Quá trình Preprocessor (tiền xử lý) là bước đầu tiên trong quá t
   #define PI 3.14
   // --> Sau tiền xử lý: mọi PI sẽ thành 3.14
   ~~~
-  Các file .c và .h sau quá trình tiền xử lý sẽ trở thành file .i chứa mã nguồn đã được xử lý.
-  
+  Các file .c sau quá trình tiền xử lý sẽ tạo thành các file .i chứa mã nguồn đã được xử lý.\
+Vd: main.c và test.c sẽ tạo thành main.i và test.i
   ![Screenshot 2025-04-14 211343](https://github.com/user-attachments/assets/5d93f4ee-42bb-41b4-a399-b46ffebba92f)
 
 ### 1.2 Compiler
 
+Ở quá trình compiler, file .i được tạo ra ở quá trình preprocessor sẽ được sử dụng để tạo file .s (file này chứa ngôn ngữ assembly một ngôn ngữ bậc thấp). Assembly (hợp ngữ) giúp thao tác trên RAM mượt mà hiệu quả hơn.\
+Vd: main.i và test.i sẽ tạo thành main.s và test.s
+### 1.3 Asembler
+
+Quá trình này sẽ tổng hợp file .s thành file .o (file này chứa mã nhị phân là ngôn ngữ máy).\
+Vd: main.s và test.s sẽ tạo thành main.o và test.o
+### 1.4 Linker
+
+Linker là quá trình cuối cùng, tất cả các file .o sẽ được liên kết để tạo ra một file .exe cuối cùng và đây cũng là file thực thi code.\
+Vd: main.o liên kết với test.o tạo thành main.exe
 ## 2. Macro
 Macros là từ hay chỉ thị dùng để chỉ những thông tin được xử lý ở quá trình tiền xử lý.\
 Macros chia làm 3 nhóm chính:\
