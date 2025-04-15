@@ -41,7 +41,7 @@ Vd: main.c và test.c sẽ tạo thành main.i và test.i
 
 ### 1.2 Compiler
 
-Ở quá trình compiler, file .i được tạo ra ở quá trình preprocessor sẽ được sử dụng để tạo file .s (file này chứa ngôn ngữ assembly một ngôn ngữ bậc thấp). Assembly (hợp ngữ) giúp thao tác trên RAM mượt mà hiệu quả hơn.\
+Ở quá trình compiler, file .i được tạo ra ở quá trình preprocessor sẽ được sử dụng để tạo file .s (file này chứa ngôn ngữ assembly một ngôn ngữ bậc thấp). Assembly (hợp ngữ) giúp thao tác trên RAM mượt mà hiệu quả hơn.
 
 Thực hiện bước biên dịch (compilation) và xuất ra mã hợp ngữ (assembly), sài lệnh cụ thể là:
 ~~~
@@ -63,7 +63,7 @@ Vd: main.i và test.i sẽ tạo thành main.s và test.s
 
 ### 1.3 Asembler
 
-Quá trình này sẽ tổng hợp file .s thành file .o (file này chứa mã nhị phân là ngôn ngữ máy).\
+Quá trình này sẽ tổng hợp file .s thành file .o (file này chứa mã nhị phân là ngôn ngữ máy).
 
 Để biên dịch mã hợp ngữ (assembly) thành mã máy (object code), ta sài lệnh cụ thể như sau
 
@@ -85,7 +85,7 @@ Vd: main.s và test.s sẽ tạo thành main.o và test.o
 
 ### 1.4 Linker
 
-Linker là quá trình cuối cùng, tất cả các file .o sẽ được liên kết để tạo ra một file .exe cuối cùng và đây cũng là file thực thi code.\
+Linker là quá trình cuối cùng, tất cả các file .o sẽ được liên kết để tạo ra một file .exe cuối cùng và đây cũng là file thực thi code.
 
 Thực hiện giai đoạn liên kết (linking), cụ thể là lệnh
 ~~~
@@ -110,7 +110,7 @@ Macros là từ hay chỉ thị dùng để chỉ những thông tin được x�
 Macros chia làm 3 nhóm chính:\
 +Chỉ thị bao hàm tệp (#include)\
 +Chỉ thị định nghĩa, hủy định nghĩa (#define, #undef)\
-+Chỉ thị biên dịch có điều kiện (#if, #elif, #else, #ifdef, #ifndef, #endif)\
++Chỉ thị biên dịch có điều kiện (#if, #elif, #else, #ifdef, #ifndef, #endif)
 ### 2.1 Include
 #include trong C/C++ là một chỉ thị của preprocessor dùng để sao chép toàn bộ các file source code vào file .i\
   ~~~
@@ -204,8 +204,8 @@ Kết quả: 20
 + #ifndef dùng để kiểm tra một macro đã được định nghĩa hay chưa, nếu macro chưa được định nghĩa thì mã nguồn sau #ifndef sẽ được biên dịch.
 + Khi sử dụng chỉ thị biên dịch có điều kiện, các file header phải viết hoa hết toàn bộ. Vd: File test.h sẽ được viết thành __TEST_H
 ~~~
-#ifndef __TEST_H
-#define __TEST_H
+#ifndef _TEST_H
+#define _TEST_H
 
 #endif
 ~~~
