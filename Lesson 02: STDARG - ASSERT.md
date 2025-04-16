@@ -147,7 +147,7 @@ int sum(int begin, ...)                                 // begin là phần tử
 
 int main()
 {
-    printf("Sum: %d\n", sum( 1, 2, 3, 4, 5));
+    printf("Sum: %d\n", sum_fn( 1, 2, 3, 4, 5));
     return 0;
 }
 ~~~
