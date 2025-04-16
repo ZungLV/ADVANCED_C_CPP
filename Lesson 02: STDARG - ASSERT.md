@@ -49,7 +49,7 @@ int sum(int count, ...)                 // count là số lượng tham số tha
                                         // sum(4,1,2,3,4) => args = "4,1,2,3,4"
     va_start(args, count);              // arg = "1,2,3,4" or arg = {"\001","\002","\003","\004"}
     int result = 0;         
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)     // lặp số lần bằng count
     {
         result += va_arg(args, int);    // gọi và cộng dồn giá trị cho result
     }
@@ -66,15 +66,88 @@ int sum(int count, ...)                 // count là số lượng tham số tha
                                         // sum(4,1,2,3,4) => args = "4,1,2,3,4"
     va_start(args, count);              // arg = "1,2,3,4" or arg = {"\001","\002","\003","\004"}
     int result = 0;         
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < count; i++)     // lặp số lần bằng count
     {
         result += va_arg(args, int);    // gọi và cộng dồn giá trị cho result
     }
     va_end(args);
     return result;
 }
+
+int main()
+{
+    printf("Sum: %d\n", sum(4, 1, 2, 3, 4));
+    return 0;
+}
 ~~~
 ~~~
 Sum: 10
 ~~~
 Tuy nhiên đoạn code trên bị phụ thuộc vào biến count để hoạt động, không còn đúng với yêu cầu sử lý số lượng tham số không xác định. Để giải quyết vấn đề này ta có thể áp dụng macro variadic.
+~~~
+#include <stdio.h>
+#include <stdarg.h>
+
+#define sum_fn(...) sum(__VA_ARGS__,'a')          // sum_fn( 1, 2, 3, 4, 5) => sum( 1, 2, 3, 4, 5,'a')
+
+int sum(int begin, ...)                           // begin là phần tử đầu tiên tham gia
+{
+    va_list args;                                 // typedef char* va_list
+                                                  // char* args
+                                                  // sum(1,2,3,4,5,a) => args = "2,3,4,5,a"
+    va_start(args, begin);                        // arg = "2,3,4,5,a" or arg = {"\002","\003","\004","\005", "\015"}
+
+    int result = begin;                           // để cộng dồn sau khi danh sách mất đi số đầu tiên
+
+    int value;                                    // sử dụng biến value làm biến trung gian để tránh lỗi sót số do gọi va_arg
+
+    while((value = va_arg(args, int)) !='a')      // dò tìm kí tự 'a' để kết thúc vòng lặp
+    {
+       result += value;
+    }
+    va_end(args);
+    return result;
+}
+
+int main()
+{
+    printf("Sum: %d\n", sum_fn( 1, 2, 3, 4, 5));
+    return 0;
+}
+~~~
+Mặc dù đoạn code trên đã giải quyết được vấn đề nhập số lượng cho các đối số không xác định. Tuy nhiên việc ép kiểu hàng loạt thành một loại do va_arg khiến cho việc xác định danh sách không chính xác do kí tự 'a' với các tham số là hai kiểu khác nhau. Để giải quyết vấn đề này ta sẽ áp dụng thành phần cuối cùng trong thư viện starg.\
+va_copy: Sao chép dữ liệu giữa 2 biến cùng kiểu va_list.
+~~~
+#include <stdio.h>
+#include <stdarg.h>
+
+#define sum_fn(...) sum(__VA_ARGS__,'a')                // sum_fn( 1, 2, 3, 4, 5) => sum( 1, 2, 3, 4, 5,'a')
+
+int sum(int begin, ...)                                 // begin là phần tử đầu tiên tham gia
+{
+    va_list args;                                       
+
+    va_list check;
+
+    va_start(args, begin);                              // arg = "2,3,4,5,a" or arg = {"\002","\003","\004","\005", "\015"}
+    va_copy(check, args);                               // check là 1 bản sao của args dùng để so sánh trong khi args dùng để tính tổng
+
+    int result = begin;                                 // để cộng dồn sau khi danh sách mất đi số đầu tiên
+
+    
+
+    while( va_arg(check, char*) != (char*)'a')          // dò tìm kí tự 'a' để kết thúc vòng lặp
+    {
+       result += va_arg(args, int);
+    }
+
+    va_end(args);                                       // khi thu hồi args thì cũng thu hồi check
+    return result;
+}
+
+int main()
+{
+    printf("Sum: %d\n", sum( 1, 2, 3, 4, 5));
+    return 0;
+}
+~~~
