@@ -136,7 +136,7 @@ int sum(int begin, ...)                                 // begin là phần tử
 
     
 
-    while( va_arg(check, char*) != (char*)'a')          // dò tìm kí tự 'a' để kết thúc vòng lặp
+    while ( va_arg(check, char*) != (char*)'a')          // dò tìm kí tự 'a' để kết thúc vòng lặp
     {
        result += va_arg(args, int);
     }
@@ -150,4 +150,7 @@ int main()
     printf("Sum: %d\n", sum_fn( 1, 2, 3, 4, 5));
     return 0;
 }
+~~~
+~~~
+d
 ~~~
