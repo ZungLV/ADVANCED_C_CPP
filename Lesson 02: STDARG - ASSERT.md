@@ -136,7 +136,7 @@ int sum(int begin, ...)                                 // begin là phần tử
 
     
 
-    while ( va_arg(check, char*) != (char*)'a')          // dò tìm kí tự 'a' để kết thúc vòng lặp
+    while ( va_arg(check, char*) != (char*)'a')          // do kí tự 'a' trong va_arg có thể là mảng "\015" nên cần ép kiểu char* để chứa
     {
        result += va_arg(args, int);
     }
@@ -152,5 +152,62 @@ int main()
 }
 ~~~
 ~~~
-d
+Sum: 15
 ~~~
+Như vậy ta không phải xác định rõ số lượng đối số tham gia mới có thể sự dụng hàm, giúp code linh hoạt hơn trong việc sử dụng.
+## ASSERT
+Thư viện assert.h trong C cung cấp các macro để kiểm tra các điều kiện giả định trong chương trình. Nếu điều kiện không thỏa mãn, chương trình sẽ dừng lại và thông báo lỗi, giúp ta phát hiện lỗi trong quá trình phát triển.\
++ Kiểm tra giả định: Giúp coder kiểm tra các giả định hoặc điều kiện mà chương trình phải thỏa mãn trong quá trình phát triển.
+
++ Giúp phát hiện lỗi sớm: Khi điều kiện giả định không đúng, chương trình sẽ dừng lại và thông báo lỗi, giúp bạn phát hiện lỗi nhanh chóng trong quá trình phát triển.
+
++ Hỗ trợ debug: assert giúp tìm ra các lỗi logic và bảo vệ chương trình khỏi các tình huống không lường trước được.
+  
+  Để sử dụng assert, cần bao gồm thư viện assert.h trong chương trình:
+ ~~~
+#include <assert.h>
+
+ int main() {
+     int x = 5;
+     assert(x == 5);  // Nếu điều này sai, chương trình sẽ dừng lại
+     assert(x != 5);  // Nếu điều này sai, chương trình sẽ dừng lại
+     return 0;
+ }
+ ~~~
+ Do khai báo x=5 khi chạy sẽ báo lỗi ở line 6 của chương trình main.c.
+ ~~~
+ main: main.c:6: main: Assertion `x != 5' failed.
+ ~~~
+ Còn khi khai báo số khác 5:
+ ~~~
+ #include <assert.h>
+
+ int main() {
+     int x = 10;
+     assert(x == 5);  // Nếu điều này sai, chương trình sẽ dừng lại
+     assert(x != 5);  // Nếu điều này sai, chương trình sẽ dừng lại
+     return 0;
+ }
+ ~~~
+ Khi chạy sẽ báo lỗi ở line 5 của chương trình main.c.
+ ~~~
+ main: main.c:5: main: Assertion `x == 5' failed.
+ ~~~
+Ngoài ra ta còn có thể áp dụng macro để debug, giúp ta có gợi ý để hiểu rõ lỗi gặp phải là gì và thuận tiện hơn trong việc quản lý code.
+ ~~~
+ #include <assert.h>
+
+ // Macro dùng để debug
+ #define LOG(condition, cmd) assert(condition && #cmd)
+ 
+ int main() {
+     int x = 10;
+     LOG(x == 5, x phải bằng 5);  // Nếu điều này sai, chương trình sẽ dừng lại
+     LOG(x != 5, x phải khác 5);  // Nếu điều này sai, chương trình sẽ dừng lại
+     return 0;
+ }
+ ~~~
+Sử dụng toán tử && assert có 2 điều kiện để thực thi. Vì #cmd đã được chuẩn hóa thành chuỗi nên bất cứ điều kiện nào của cmd cũng đúng do là chuỗi, nên assert sẽ chỉ so sánh điều kiện đầu. Khi chạy chương trình ta sẽ có kết quả như sau.
+ ~~~
+ main: main.c:8: main: Assertion `x == 5 && "x phải bằng 5"' failed.
+ ~~~
