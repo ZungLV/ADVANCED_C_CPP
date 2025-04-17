@@ -164,8 +164,8 @@ a ^ b  = 00111110
 # Shift left - Shift right bitwise
 
 + Dùng để di chuyển bit sang trái hoặc sang phải.
-+ Trong trường hợp <<, các bit ở bên phải sẽ được dịch sang trái, và các bit trái cùng sẽ được đặt giá trị 0.
-+ Trong trường hợp >>, các bit ở bên trái sẽ được dịch sang phải, và các bit phải cùng sẽ được đặt giá trị 0 hoặc 1 tùy thuộc vào giá trị của bit cao nhất (bit dấu).
++ Trong trường hợp `<<`, các bit ở bên phải sẽ được dịch sang trái, và các bit trái cùng sẽ được đặt giá trị `0`.
++ Trong trường hợp `>>`, các bit ở bên trái sẽ được dịch sang phải, và các bit phải cùng sẽ được đặt giá trị `0` hoặc `1` tùy thuộc vào giá trị của bit cao nhất (bit dấu).
 
 Cú pháp của Shift left - Shift right bitwise là
 
@@ -197,4 +197,9 @@ int main() {
 
     return 0;
 }
+```
+```
+a       = 00001111 (15)
+a << 4  = 11110000 (240)
+a >> 2  = 00000011 (3)
 ```
