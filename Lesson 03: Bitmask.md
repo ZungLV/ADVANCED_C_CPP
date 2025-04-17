@@ -203,3 +203,176 @@ a       = 00001111 (15)
 a << 4  = 11110000 (240)
 a >> 2  = 00000011 (3)
 ```
+
+## Thao tác BIT
+Thay vì phải chia ra làm nhiều biến khác nhau và chiếm nhiều bộ nhớ của chương trình, ta có thể quy định các các đặc điểm khác nhau nằm trên các bit nhất định, điều đó sẽ giúp giảm thiểu bộ nhớ phải sài và dễ quản lý hơn.
+
+VD: Sử dụng `#define` để định nghĩa từng bit ứng với từng loại đồ uống
+
+```C
+#include <stdio.h>
+#include <stdint.h>
+
+#define TEA           1 << 0  // Bit 0: Trà (0 = Không, 1 = Có)
+#define COFFEE        1 << 1  // Bit 1: Cà phê (0 = Không, 1 = Có)
+#define MILK          1 << 2  // Bit 2: Sữa (0 = Không, 1 = Có)
+#define BUBBLE TEA    1 << 3  // Bit 3: Trà sữa (0 = Không, 1 = Có)
+
+// Tự thêm tính năng khác
+#define ENERGY DRINK  1 << 4  // Bit 4: Tăng lực (0 = Không, 1 = Có)
+#define ORANGE JUICE  1 << 5  // Bit 5: Nước cam (0 = Không, 1 = Có)
+#define COCA COLA     1 << 6  // Bit 6: Coca Cola (0 = Không, 1 = Có)
+#define BEER          1 << 7  // Bit 7: Bia (0 = Không, 1 = Có)
+```
+
+Tiếp đó tạo 1 hàm để order nước, sử dụng toán tử OR với món nước mình đã định nghĩa bằng `#define` ta sẽ được món đó lên `1` do OR với `1`. Trong khi tất cả các món còn lại giữ nguyên do OR với `0`.
+
+```C
+void AddOrder(uint8_t *drinks, uint8_t drink)
+{
+    *drinks |= drink;
+}
+```
+
+Tiếp theo đó tạo 1 hàm để hủy order nước, sử dụng toán tử AND và NOT với món nước mình đã định nghĩa bằng `#define`. Ví dụ với món `COFFEE` dịch trái 1 sẽ có mã nhị phân là `0b00000010`. Sử dụng toán tử NOT sẽ thành `0b11111101` và khi sử dụng toán tử AND với `drink` ta sẽ được duy nhất bit thứ 2 trong `drinks` = `0` do AND với `0` còn các biến còn lại bằng `1` do AND với `1`.
+
+```C
+int isFeatureEnabled(uint8_t drinks, uint8_t drink)
+{
+    return (drinks & drink) != 0;
+}
+```
+
+Sau cùng tạo một hàm kiểm tra các thức uống đã đặt bằng cách xem ở các BIT tương ứng đã lên `1` hay chưa.
+
+```C
+void listSelectedDrinks(uint8_t drinks)
+{
+    printf("Selected Drinks:\n");
+
+    if (drinks & TEA) {
+        printf("- TEA\n");
+    }
+    if (drinks & COFFEE) {
+        printf("- COFFEE\n");
+    }
+    if (drinks & MILK) {
+        printf("- MILK\n");
+    }
+    if (drinks & BUBBLE_TEA ) {
+        printf("- BUBBLE TEA \n");
+    }
+    if (drinks & ENERGY_DRINK) {
+        printf("- ENERGY DRINK\n");
+    }
+    if (drinks & ORANGE_JUICE) {
+        printf("- ORANGE JUICE\n");
+    }
+    if (drinks & COCA_COLA) {
+        printf("- COCA COLA\n");
+    }
+    if (drinks & BEER) {
+        printf("- BEER\n");
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        printf("drink selected: %d\n", (drinks >> i) & 1);
+    }
+   
+}
+```
+
+Ta sẽ có một chương trình hoàn chỉnh như sau 
+```C
+#include <stdio.h>
+#include <stdint.h>
+
+#define TEA           1 << 0  // Bit 0: Trà (0 = Không, 1 = Có)
+#define COFFEE        1 << 1  // Bit 1: Cà phê (0 = Không, 1 = Có)
+#define MILK          1 << 2  // Bit 2: Sữa (0 = Không, 1 = Có)
+#define BUBBLE_TEA    1 << 3  // Bit 3: Trà sữa (0 = Không, 1 = Có)
+
+// Tự thêm tính năng khác
+#define ENERGY_DRINK  1 << 4  // Bit 4: Tăng lực (0 = Không, 1 = Có)
+#define ORANGE_JUICE  1 << 5  // Bit 5: Nước cam (0 = Không, 1 = Có)
+#define COCA_COLA     1 << 6  // Bit 6: Coca Cola (0 = Không, 1 = Có)
+#define BEER          1 << 7  // Bit 7: Bia (0 = Không, 1 = Có)
+
+void AddOrder(uint8_t *drinks, uint8_t drink)
+{
+    *drinks |= drink;
+}
+
+void CancelOrder(uint8_t *drinks, uint8_t drink)
+{
+    *drinks &= ~drink;
+}
+
+
+void listSelectedDrinks(uint8_t drinks)
+{
+    printf("Selected Drinks:\n");
+
+    if (drinks & TEA) {
+        printf("- TEA\n");
+    }
+    if (drinks & COFFEE) {
+        printf("- COFFEE\n");
+    }
+    if (drinks & MILK) {
+        printf("- MILK\n");
+    }
+    if (drinks & BUBBLE_TEA ) {
+        printf("- BUBBLE TEA \n");
+    }
+    if (drinks & ENERGY_DRINK) {
+        printf("- ENERGY DRINK\n");
+    }
+    if (drinks & ORANGE_JUICE) {
+        printf("- ORANGE JUICE\n");
+    }
+    if (drinks & COCA_COLA) {
+        printf("- COCA COLA\n");
+    }
+    if (drinks & BEER) {
+        printf("- BEER\n");
+    }
+    for (int i = 0; i < 8; i++)
+    {
+        printf("drink selected: %d\n", (drinks >> i) & 1);
+    }
+   
+}
+
+int main()
+{
+    uint8_t options = 0;
+
+    // Thêm tính năng
+    AddOrder(&options, BUBBLE_TEA | COCA_COLA | BEER | ORANGE_JUICE);
+
+    // Xóa tính năng
+    CancelOrder(&options, ORANGE_JUICE);
+
+    // Liệt kê các tính năng đã chọn
+    listSelectedDrinks(options);
+   
+    return 0;
+}
+
+```
+Kết quả chạy được
+```
+Selected Drinks:
+- BUBBLE TEA 
+- COCA COLA
+- BEER
+drink selected: 0
+drink selected: 0
+drink selected: 0
+drink selected: 1
+drink selected: 0
+drink selected: 0
+drink selected: 1
+drink selected: 1
+```
