@@ -189,10 +189,10 @@ int main() {
     uint8_t a = 0b00001111;
     printf("a       = "); print_binary(a); printf(" (%d)\n", a);
 
-    uint8_t left = a << 4;      // Dịch 5 bit về phía bên trái 
+    uint8_t left = a << 4;      // Dịch 4 bit về phía bên trái 
     printf("a << 4  = "); print_binary(left); printf(" (%d)\n", left);
 
-    uint8_t right = a >> 2;     // Dịch 3 bit về phía bên phải 
+    uint8_t right = a >> 2;     // Dịch 2 bit về phía bên phải 
     printf("a >> 2  = "); print_binary(right); printf(" (%d)\n", right);
 
     return 0;
