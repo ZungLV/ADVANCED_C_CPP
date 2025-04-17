@@ -1,20 +1,20 @@
 # STDARG - ASSERT
 ## STDARG
 Cung cấp các phương thức để làm việc với các hàm có số lượng input parameter không cố định.\
-Các hàm như printf và scanf là ví dụ điển hình.\
-Để có thể sử dụng thư viện stdarg ta cần phải khai báo thư viện
+Các hàm như `printf` và `scanf` là ví dụ điển hình.\
+Để có thể sử dụng thư viện `stdarg` ta cần phải khai báo thư viện
 ~~~
 #include <stdarg.h>
 ~~~
 ### Những thành phần trong thư viện stdarg
- ... : đại diện cho số lượng tham số không xác định trong hàm
+ `...` : đại diện cho số lượng tham số không xác định trong hàm
 ~~~
 #include <stdio.h>
 #include <stdarg.h>
 
 int sum(int count, ...)   // count là số lượng tham số tham gia
 ~~~
-va_list: là một kiểu dữ liệu để đại diện cho danh sách các đối số biến đổi. va_list là một typedef char* hay có thể hiểu là con trỏ kiểu char. Kiểu char chỉ có thể lưu trữ 1 kí tự trong khi đó con trỏ kiểu char có thể lưu trữ nhiều kí tự nói cách khác là 1 chuỗi. Sử dụng macro này sẽ khai báo biến mà ta mong muốn có dạng char* và dùng để lưu trữ số lượng tham số không xác định.
+`va_list`: là một kiểu dữ liệu để đại diện cho danh sách các đối số biến đổi. `va_list` là một `typedef char*` hay có thể hiểu là con trỏ kiểu `char`. Kiểu `char` chỉ có thể lưu trữ 1 kí tự trong khi đó con trỏ kiểu `char` có thể lưu trữ nhiều kí tự nói cách khác là 1 chuỗi. Sử dụng macro này sẽ khai báo biến mà ta mong muốn có dạng `char*` và dùng để lưu trữ số lượng tham số không xác định.
 ~~~
 #include <stdio.h>
 #include <stdarg.h>
@@ -25,7 +25,7 @@ int sum(int count, ...)   // count là số lượng tham số tham gia
                           // char* args
                           // sum(4,1,2,3,4) => args = "4,1,2,3,4"
 ~~~
-va_start: Bắt đầu một danh sách đối số biến đổi. Nó cần được gọi trước khi truy cập các đối số biến đổi đầu tiên. Có dạng va_start(v,l) với v là value là danh sách các đối số biến đổi mong muốn, l là label dùng để so sánh với các phần tử trong danh sách v. Hàm va_start sẽ dò từng phần tử trong v và khi tìm ra phần tử trùng khớp với l, mọi phần tử sau l sẽ được nhập vào v. Dựa trên trình biên dịch các phần tử sẽ được lưu dưới dạng chuỗi hoặc dạng mảng.
+`va_start`: Bắt đầu một danh sách đối số biến đổi. Nó cần được gọi trước khi truy cập các đối số biến đổi đầu tiên. Có dạng `va_start(v,l)` với `v` là value là danh sách các đối số biến đổi mong muốn, `l` là label dùng để so sánh với các phần tử trong danh sách `v`. Hàm `va_start` sẽ dò từng phần tử trong `v` và khi tìm ra phần tử trùng khớp với `l`, mọi phần tử sau `l` sẽ được nhập vào `v`. Dựa trên trình biên dịch các phần tử sẽ được lưu dưới dạng chuỗi hoặc dạng mảng.
 ~~~
 #include <stdio.h>
 #include <stdarg.h>
@@ -37,7 +37,7 @@ int sum(int count, ...)     // count là số lượng tham số tham gia
                             // sum(4,1,2,3,4) => args = "4,1,2,3,4"
     va_start(args, count);  // arg = "1,2,3,4" or arg = {"\001","\002","\003","\004"} 
 ~~~
-va_arg: Truy cập một đối số trong danh sách. Hàm này nhận một đối số của kiểu được xác định bởi tham số thứ hai. Mỗi lần gọi va_arg sẽ truy cập đối số đằng sau đối số của lần gọi trước.
+`va_arg`: Truy cập một đối số trong danh sách. Hàm này nhận một đối số của kiểu được xác định bởi tham số thứ hai. Mỗi lần gọi `va_arg` sẽ truy cập đối số đằng sau đối số của lần gọi trước.
 ~~~
 #include <stdio.h>
 #include <stdarg.h>
@@ -54,7 +54,7 @@ int sum(int count, ...)                 // count là số lượng tham số tha
         result += va_arg(args, int);    // gọi và cộng dồn giá trị cho result
     }
 ~~~
-va_end: Kết thúc việc sử dụng danh sách đối số biến đổi. Dùng khi để thu hồi con trỏ động đã cấp phát trước đó bằng va_list. Nó cần được gọi trước khi kết thúc hàm.
+`va_end`: Kết thúc việc sử dụng danh sách đối số biến đổi. Dùng khi để thu hồi con trỏ động đã cấp phát trước đó bằng `va_list`. Nó cần được gọi trước khi kết thúc hàm.
 ~~~
 #include <stdio.h>
 #include <stdarg.h>
@@ -115,8 +115,8 @@ int main()
     return 0;
 }
 ~~~
-Mặc dù đoạn code trên đã giải quyết được vấn đề nhập số lượng cho các đối số không xác định. Tuy nhiên việc ép kiểu hàng loạt thành một loại do va_arg khiến cho việc xác định danh sách không chính xác do kí tự 'a' với các tham số là hai kiểu khác nhau. Để giải quyết vấn đề này ta sẽ áp dụng thành phần cuối cùng trong thư viện starg.\
-va_copy: Sao chép dữ liệu giữa 2 biến cùng kiểu va_list.
+Mặc dù đoạn code trên đã giải quyết được vấn đề nhập số lượng cho các đối số không xác định. Tuy nhiên việc ép kiểu hàng loạt thành một loại do `va_arg` khiến cho việc xác định danh sách không chính xác do kí tự 'a' với các tham số là hai kiểu khác nhau. Để giải quyết vấn đề này ta sẽ áp dụng thành phần cuối cùng trong thư viện starg.\
+`va_copy`: Sao chép dữ liệu giữa 2 biến cùng kiểu `va_list`.
 ~~~
 #include <stdio.h>
 #include <stdarg.h>
@@ -156,14 +156,14 @@ Sum: 15
 ~~~
 Như vậy ta không phải xác định rõ số lượng đối số tham gia mới có thể sự dụng hàm, giúp code linh hoạt hơn trong việc sử dụng.
 ## ASSERT
-Thư viện assert.h trong C cung cấp các macro để kiểm tra các điều kiện giả định trong chương trình. Nếu điều kiện không thỏa mãn, chương trình sẽ dừng lại và thông báo lỗi, giúp ta phát hiện lỗi trong quá trình phát triển.\
+Thư viện `assert.h` trong C cung cấp các macro để kiểm tra các điều kiện giả định trong chương trình. Nếu điều kiện không thỏa mãn, chương trình sẽ dừng lại và thông báo lỗi, giúp ta phát hiện lỗi trong quá trình phát triển.
 + Kiểm tra giả định: Giúp coder kiểm tra các giả định hoặc điều kiện mà chương trình phải thỏa mãn trong quá trình phát triển.
 
 + Giúp phát hiện lỗi sớm: Khi điều kiện giả định không đúng, chương trình sẽ dừng lại và thông báo lỗi, giúp bạn phát hiện lỗi nhanh chóng trong quá trình phát triển.
 
 + Hỗ trợ debug: assert giúp tìm ra các lỗi logic và bảo vệ chương trình khỏi các tình huống không lường trước được.
   
-  Để sử dụng assert, cần bao gồm thư viện assert.h trong chương trình:
+  Để sử dụng assert, cần bao gồm thư viện `assert.h` trong chương trình:
  ~~~
 #include <assert.h>
 
@@ -174,7 +174,7 @@ Thư viện assert.h trong C cung cấp các macro để kiểm tra các điều
      return 0;
  }
  ~~~
- Do khai báo x=5 khi chạy sẽ báo lỗi ở line 6 của chương trình main.c.
+ Do khai báo `x=5` khi chạy sẽ báo lỗi ở line 6 của chương trình main.c.
  ~~~
  main: main.c:6: main: Assertion `x != 5' failed.
  ~~~
@@ -207,7 +207,7 @@ Ngoài ra ta còn có thể áp dụng macro để debug, giúp ta có gợi ý 
      return 0;
  }
  ~~~
-Sử dụng toán tử && assert có 2 điều kiện để thực thi. Vì #cmd đã được chuẩn hóa thành chuỗi nên bất cứ điều kiện nào của cmd cũng đúng do là chuỗi, nên assert sẽ chỉ so sánh điều kiện đầu. Khi chạy chương trình ta sẽ có kết quả như sau.
+Sử dụng toán tử && assert có 2 điều kiện để thực thi. Vì `#cmd` đã được chuẩn hóa thành chuỗi nên bất cứ điều kiện nào của `cmd` cũng đúng do là chuỗi, nên assert sẽ chỉ so sánh điều kiện đầu. Khi chạy chương trình ta sẽ có kết quả như sau.
  ~~~
  main: main.c:8: main: Assertion `x == 5 && "x phải bằng 5"' failed.
  ~~~
