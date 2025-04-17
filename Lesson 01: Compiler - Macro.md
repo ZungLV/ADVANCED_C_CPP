@@ -5,43 +5,43 @@ Các bước đó có quy trình như sau: Preprocessor -> Compiler -> Asembler 
 ![Screenshot 2025-04-14 204059](https://github.com/user-attachments/assets/46d61cc2-3908-401f-be4c-629c5dc3c5f6)
 ### 1.1 Preprocessor
 Quá trình Preprocessor (tiền xử lý) là bước đầu tiên trong quá trình biên dịch mã nguồn, đặc biệt trong các ngôn ngữ như C/C++. Trong quá trình này sẽ sử lý các chỉ thị bắt đầu bằng dấu # (gọi là preprocessor directives) trước khi mã được biên dịch thực sự. Qúa trình tiền xử lý sẽ thực hiện các công việc như sau.
-+ Nhận mã nguồn: Nhận các file .c (như main.c) và các file .h mà đã được chèn nội dung
-  ~~~
++ Nhận mã nguồn: Nhận các file `.c` (như main.c) và các file `.h` mà đã được chèn nội dung
+  ```C
   #include <stdio.h>
   #include "a.h"
   #include "b.h"
-  ~~~
-  Trình tiền xử lý sẽ thay #include <stdio.h>, include "a.h" và include "b.h" bằng toàn bộ nội dung file stdio.h, a.h và b.h
+  ```
+  Trình tiền xử lý sẽ thay `#include <stdio.h>`, `include "a.h"` và `include "b.h"` bằng toàn bộ nội dung file `stdio.h`, `a.h` và `b.h`
 + Xóa bỏ tất cả chú thích, comments của chương trình:
-  ~~~
+  ```C
   // Mọi comments được đặt sau dấu "//" sau quá trình tiền xử lý sẽ bị xóa sạch
-  ~~~
-+ Chỉ thị tiền xử lý (bắt đầu bằng #) cũng được xử lý
-  ~~~
+  ```
++ Chỉ thị tiền xử lý (bắt đầu bằng `#`) cũng được xử lý
+  ```C
   #define PI 3.14
   // --> Sau tiền xử lý: mọi PI sẽ thành 3.14
-  ~~~
+  ```
   Để chạy giai đoạn tiền xử lý (preprocessing) trong quá trình biên dịch với GCC của VSCODE ta sử dụng lệnh như sau
-  ~~~
+  ```C
   gcc -E main.c -o main.i
-  ~~~
+  ```
   
   Trong đó
-  + gcc: Gọi trình biên dịch GCC
+  + `gcc`: Gọi trình biên dịch GCC
 
-  + -E: Chỉ thực hiện bước tiền xử lý, không biên dịch, không liên kết
+  + `-E`: Chỉ thực hiện bước tiền xử lý, không biên dịch, không liên kết
 
-  + main.c: Tệp mã nguồn C đầu vào
+  + `main.c`: Tệp mã nguồn C đầu vào
 
-  + -o main.i: Ghi kết quả đầu ra vào tệp main.i
+  + `-o main.i`: Ghi kết quả đầu ra vào tệp main.i
 
-  Các file .c sau quá trình tiền xử lý sẽ tạo thành các file .i chứa mã nguồn đã được xử lý.\
-Vd: main.c và test.c sẽ tạo thành main.i và test.i
+  Các file `.c` sau quá trình tiền xử lý sẽ tạo thành các file `.i` chứa mã nguồn đã được xử lý.\
+Vd: `main.c` và `test.c` sẽ tạo thành `main.i` và `test.i`
   ![Screenshot 2025-04-14 211343](https://github.com/user-attachments/assets/5d93f4ee-42bb-41b4-a399-b46ffebba92f)
 
 ### 1.2 Compiler
 
-Ở quá trình compiler, file .i được tạo ra ở quá trình preprocessor sẽ được sử dụng để tạo file .s (file này chứa ngôn ngữ assembly một ngôn ngữ bậc thấp). Assembly (hợp ngữ) giúp thao tác trên RAM mượt mà hiệu quả hơn.
+Ở quá trình compiler, file `.i` được tạo ra ở quá trình preprocessor sẽ được sử dụng để tạo file `.s` (file này chứa ngôn ngữ assembly một ngôn ngữ bậc thấp). Assembly (hợp ngữ) giúp thao tác trên RAM mượt mà hiệu quả hơn.
 
 Thực hiện bước biên dịch (compilation) và xuất ra mã hợp ngữ (assembly), sài lệnh cụ thể là:
 ~~~
@@ -49,21 +49,21 @@ gcc -S main.i -o main.s
 ~~~
 
 Trong đó
-+ gcc:	Gọi trình biên dịch GCC
++ `gcc`:	Gọi trình biên dịch GCC
   
-+ -S:	Viết tắt của "Assembly only" – chỉ dịch mã nguồn thành mã hợp ngữ
++ `-S`:	Viết tắt của "Assembly only" – chỉ dịch mã nguồn thành mã hợp ngữ
   
-+ main.i:	File đầu vào – mã C đã qua tiền xử lý
++ `main.i`:	File đầu vào – mã C đã qua tiền xử lý
   
-+ -o main.s:	Tên file đầu ra chứa mã hợp ngữ
++ `-o main.s`:	Tên file đầu ra chứa mã hợp ngữ
 
-Vd: main.i và test.i sẽ tạo thành main.s và test.s
+Vd: `main.i` và `test.i` sẽ tạo thành `main.s` và `test.s`
 
 ![Screenshot 2025-04-15 220543](https://github.com/user-attachments/assets/af7f6cd7-702a-4f4e-9412-f7e85cd22370)
 
 ### 1.3 Asembler
 
-Quá trình này sẽ tổng hợp file .s thành file .o (file này chứa mã nhị phân là ngôn ngữ máy).
+Quá trình này sẽ tổng hợp file `.s` thành file `.o` (file này chứa mã nhị phân là ngôn ngữ máy).
 
 Để biên dịch mã hợp ngữ (assembly) thành mã máy (object code), ta sài lệnh cụ thể như sau
 
@@ -72,20 +72,20 @@ gcc -c main.s -o main.o
 ~~~
 
 Trong đó
-+ gcc:	Gọi trình biên dịch GCC
++ `gcc`:	Gọi trình biên dịch GCC
 
-+ -c:	Compile only – chỉ biên dịch, không liên kết
++ `-c`:	Compile only – chỉ biên dịch, không liên kết
 
-+ main.s:	File mã hợp ngữ đầu vào (được tạo từ gcc -S)
++ `main.s`:	File mã hợp ngữ đầu vào (được tạo từ gcc -S)
 
-+ -o main.o:	Xuất kết quả ra file object (.o)
++ `-o main.o`:	Xuất kết quả ra file object (.o)
 
-Vd: main.s và test.s sẽ tạo thành main.o và test.o
+Vd: `main.s` và `test.s` sẽ tạo thành `main.o` và `test.o`
 ![Screenshot 2025-04-15 220630](https://github.com/user-attachments/assets/8ce5f730-9e9c-4045-8ebf-7fc035943c47)
 
 ### 1.4 Linker
 
-Linker là quá trình cuối cùng, tất cả các file .o sẽ được liên kết để tạo ra một file .exe cuối cùng và đây cũng là file thực thi code.
+Linker là quá trình cuối cùng, tất cả các file `.o` sẽ được liên kết để tạo ra một file `.exe` cuối cùng và đây cũng là file thực thi code.
 
 Thực hiện giai đoạn liên kết (linking), cụ thể là lệnh
 ~~~
@@ -93,13 +93,13 @@ gcc main.o test.o -o main
 ~~~
 
 Trong đó
-+ gcc:	Gọi trình biên dịch GCC
++ `gcc`:	Gọi trình biên dịch GCC
 
-+ main.o test.o:	Các file object (.o) – đã được biên dịch
++ `main.o test.o`:	Các file object (.o) – đã được biên dịch
 
-+ -o main:	Đặt tên cho file thực thi đầu ra là main
++ `-o main`:	Đặt tên cho file thực thi đầu ra là main
 
-Vd: main.o liên kết với test.o tạo thành main.exe mà ta có thể chạy với lệnh
+Vd: `main.o` liên kết với `test.o` tạo thành `main.exe` mà ta có thể chạy với lệnh
 ~~~
 ./main
 ~~~
@@ -108,31 +108,31 @@ Vd: main.o liên kết với test.o tạo thành main.exe mà ta có thể chạ
 ## 2. Macro
 Macros là từ hay chỉ thị dùng để chỉ những thông tin được xử lý ở quá trình tiền xử lý.\
 Macros chia làm 3 nhóm chính:\
-+Chỉ thị bao hàm tệp (#include)\
-+Chỉ thị định nghĩa, hủy định nghĩa (#define, #undef)\
-+Chỉ thị biên dịch có điều kiện (#if, #elif, #else, #ifdef, #ifndef, #endif)
++Chỉ thị bao hàm tệp (`#include`)\
++Chỉ thị định nghĩa, hủy định nghĩa (`#define`, `#undef`)\
++Chỉ thị biên dịch có điều kiện (`#if`, `#elif`, `#else`, `#ifdef`, `#ifndef`, `#endif`)
 ### 2.1 Include
-#include trong C/C++ là một chỉ thị của preprocessor dùng để sao chép toàn bộ các file source code vào file .i\
-  ~~~
+`#include` trong C/C++ là một chỉ thị của preprocessor dùng để sao chép toàn bộ các file source code vào file `.i`\
+  ```C
   #include <stdio.h>
   #include <math.h>
   #include "a.h"
   #include "b.h"
-  ~~~
-Ta có thể thấy include có hai dạng <> và ""\
-Đối với #include <> sẽ được áp dụng với các thư viện chuẩn (như stdio.h, math.h), máy sẽ tìm những thư viện này trong thư viện hệ thống trước hay ở trong các thư mục cài đặt. Còn đối với #include "" áp dụng với các code tự viết (như a.h, b.h) máy sẽ tìm trong thư mục hiện tại trước.	
+  ```
+Ta có thể thấy include có hai dạng `<>` và `""`\
+Đối với `#include <>` sẽ được áp dụng với các thư viện chuẩn (như `stdio.h`, `math.h`), máy sẽ tìm những thư viện này trong thư viện hệ thống trước hay ở trong các thư mục cài đặt. Còn đối với `#include ""` áp dụng với các code tự viết (như `a.h`, `b.h`) máy sẽ tìm trong thư mục hiện tại trước.	
 ### 2.2 Define
 + Macro là một khái niệm dùng để định nghĩa một tập hợp các hướng dẫn tiền xử lý
 + Dùng để thay thế một chuỗi mã nguồn bằng một chuỗi khác trước khi chương trình biên dịch.
 + Giúp giảm lặp lại mã, dễ bảo trì chương trình.
-+ Macro được định nghĩa bằng cách sử dụng chỉ thị tiền xử lý #define
++ Macro được định nghĩa bằng cách sử dụng chỉ thị tiền xử lý `#define`
 ### Sử dụng define để định nghĩa biến
-  ~~~
+  ```C
   #define PI 3.14
-  ~~~
-Mọi biến PI trong chương trình sẽ được đổi thành 3.14
+  ```
+Mọi biến `PI` trong chương trình sẽ được đổi thành 3.14
 ### Sử dụng define để tạo một macro tính toán
-~~~
+```C
 #include <stdio.h>
 
 // Macro để tính gấp đôi của một số
@@ -145,13 +145,13 @@ int main()
     printf("Kết quả ta được là: %d\n", result);
     return 0;
 }
-~~~
+```
 Kết quả ta được
 ~~~
 Kết quả ta được là: 10
 ~~~
 ### Sử dụng define để định nghĩa một hàm bất kì
-~~~
+```C
 #include <stdio.h>
 
 #define DISPLAY_MULTI(a,b)                    \
@@ -163,28 +163,28 @@ int main()
     DISPLAY_MULTI(5,4)
     return 0;
 }
-~~~
-Ta sử dụng các dấu "\\" để liên kết giữa các hàng\
+```
+Ta sử dụng các dấu `\` để liên kết giữa các hàng\
 Kết quả ta được
 ~~~
 Đây là macro nhân 2 biến bất kì
 Kết quả: 20
 ~~~
 ### Sử dụng undef để hủy định nghĩa
-Để hủy định nghĩa đã được lập sẵn, ta có thể sử dụng #undef
-~~~
+Để hủy định nghĩa đã được lập sẵn, ta có thể sử dụng `#undef`
+```C
 // Hủy định nghĩa YEAR và định nghĩa lại YEAR
 #define YEAR 2024
 #undef YEAR
 #define YEAR 2025
-~~~
+```
 ### Chỉ thị biên dịch có điều kiện (#if, #elif, #else)
-+ #if sử dụng để bắt đầu một điều kiện tiền xử lý.
-+ Nếu điều kiện trong #if là đúng, các dòng mã nguồn sau #if sẽ được biên dịch
-+ Nếu sai, các dòng mã nguồn sẽ bị bỏ qua đến khi gặp #endif
-+ #elif dùng để thêm một điều kiện mới khi điều kiện trước đó trong #if hoặc #elif là sai
-+ #else dùng khi không có điều kiện nào ở trên đúng.
-~~~
++ `#if` sử dụng để bắt đầu một điều kiện tiền xử lý.
++ Nếu điều kiện trong `#if` là đúng, các dòng mã nguồn sau `#if` sẽ được biên dịch
++ Nếu sai, các dòng mã nguồn sẽ bị bỏ qua đến khi gặp `#endif`
++ `#elif` dùng để thêm một điều kiện mới khi điều kiện trước đó trong `#if` hoặc `#elif` là sai
++ `#else` dùng khi không có điều kiện nào ở trên đúng.
+```C
 #define TRAFFIC_LIGHT GREEN
 
 // Ứng với mỗi 1 màu của đèn giao thông mà ta sẽ có hiệu lệnh riêng
@@ -198,21 +198,21 @@ Kết quả: 20
 #else 
     printf("Đèn không hợp lệ\n");
 #endif
-~~~
+```
 ### Chỉ thị biên dịch có điều kiện (#ifdef, #ifndef)
-+ #ifdef dùng để kiểm tra một macro đã được định nghĩa hay chưa, nếu macro đã được định nghĩa thì mã nguồn sau #ifdef sẽ được biên dịch.
-+ #ifndef dùng để kiểm tra một macro đã được định nghĩa hay chưa, nếu macro chưa được định nghĩa thì mã nguồn sau #ifndef sẽ được biên dịch.
-+ Khi sử dụng chỉ thị biên dịch có điều kiện, các file header phải viết hoa hết toàn bộ. Vd: File test.h sẽ được viết thành __TEST_H
-~~~
++ `#ifdef` dùng để kiểm tra một macro đã được định nghĩa hay chưa, nếu macro đã được định nghĩa thì mã nguồn sau `#ifdef` sẽ được biên dịch.
++ `#ifndef` dùng để kiểm tra một macro đã được định nghĩa hay chưa, nếu macro chưa được định nghĩa thì mã nguồn sau `#ifndef` sẽ được biên dịch.
++ Khi sử dụng chỉ thị biên dịch có điều kiện, các file header phải viết hoa hết toàn bộ. Vd: File `test.h` sẽ được viết thành `_TEST_H`
+```C
 #ifndef _TEST_H
 #define _TEST_H
 
 #endif
-~~~
+```
 Cú pháp trên giúp định nghĩa lại macro nếu chưa được định nghĩa, nhờ vậy mà tránh lỗi do khai báo thư viện nhiều lần.
 ### 2. Toán tử trong macro
 ### Toán tử ## để nối các chuỗi
-~~~
+```C
 #include <stdio.h>
 #define DECLARE_VARIABLE(prefix, number) int prefix##number
 int main()
@@ -222,12 +222,12 @@ int main()
     DECLARE_VARIABLE(var, 2); // int var2;
     return 0;
 }
-~~~
-Sau khi preprocessor ta sẽ được hai biến mới là var1 và var2 được nối với nhau bằng toán tử "##"
+```
+Sau khi preprocessor ta sẽ được hai biến mới là `var1` và `var2` được nối với nhau bằng toán tử `##`
 
 ### Toán tử # chuẩn hóa lên chuỗi
 
-~~~
+```C
 #include <stdio.h>
 #define CREATE_STRING(txt) print(#txt) // hàm in ra bất cứ văn bản nào được đặt trong hàm
 int main()
@@ -235,7 +235,7 @@ int main()
     CREATE_STRING(ADVANCED_C) // hàm này sẽ trả về print("ADVANCED_C)
     return 0;
 }
-~~~
+```
 Nhờ có toán tử # mà đoạn văn bản ADVANCED_C trở thành chuỗi, khi đó ta có kết quả in được
 ~~~
 ADVANCED_C
@@ -246,13 +246,13 @@ ADVANCED_C
 + Là một dạng macro cho phép nhận một số lượng biến tham số có thể thay đổi.
 + Giúp định nghĩa các macro có thể xử lý một lượng biến đầu vào khác nhau
 
-~~~
+```C
 #define MACRO_NAME(...) __VA_ARGS__  // __VA_ARGS__ sẽ tự hiểu là những biến trong ...
-~~~
+```
 
 Ví dụ về một hàm tính tổng sử dụng Macro Variadic 
 
-~~~
+```C
 #include <stdio.h>
 
 #define DISPLAY_SUM(...)                      \
@@ -270,9 +270,9 @@ int main()
     DISPLAY_SUM(1,2,3,4,5);
     return 0;
 }
-~~~
+```
 
-__VA_ARGS__ sẽ nhận về cho mảng các số đã được nhập vào hàm DISPLAY_SUM() khi đó ta có mảng int arr[] = {__VA_ARGS__, 'n'} sẽ thành int arr[] = {1,2,3,4,5, 'n'} để lại 'n' là phần tử cuối cùng trong mảng. Nhờ vậy mảng arr[] sẽ quét qua tất cả các số trước khi tới 'n' (thoát khỏi vòng while) và ta được một hàm tính tổng từ 1 tới 5.
+`__VA_ARGS__` sẽ nhận về cho mảng các số đã được nhập vào hàm `DISPLAY_SUM()` khi đó ta có mảng `int arr[] = {__VA_ARGS__, 'n'}` sẽ thành `int arr[] = {1,2,3,4,5, 'n'}` để lại `'n'` là phần tử cuối cùng trong mảng. Nhờ vậy mảng `arr[]` sẽ quét qua tất cả các số trước khi tới `'n'` (thoát khỏi vòng `while`) và ta được một hàm tính tổng từ 1 tới 5.
 
 ~~~
 Kết quả: 15
