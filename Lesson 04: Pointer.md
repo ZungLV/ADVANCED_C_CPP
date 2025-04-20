@@ -278,6 +278,117 @@ value is: 10.500000
 address is: 0x7ffeccdca158
 ```
 Qua đoạn code trên ta có thể thấy ptr đã trỏ qua từng kiểu `int`, `char`, `double` lấy được địa chỉ và giá trị của chúng. Thay vì phải tạo ra từng kiểu con trỏ một và tốn 8 bytes bộ nhớ cho mỗi con trỏ, việc chỉ sử dụng mỗi một con trỏ kiểu `void` giúp ta tiết kiệm đáng kể bộ nhớ phải sài.
+
+### Mảng void pointer
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    char arr_txt[] = "ADVANCED_C_CPP";
+
+    void *ptr = &arr_txt;
+
+    printf("Value is: %c and adress is %p\n", *(char*)(ptr), ptr);
+
+    int arr_num[] = {15,52,36,47,85};
+
+    ptr = &arr_num;
+
+    printf("Value is: %d and adress is %p\n", *(char*)(ptr), ptr);
+
+    return 0;
+}
+```
+```
+Value is: A and adress is 0x7ffcbbd66019
+Value is: 15 and adress is 0x7ffcbbd66000
+```
+
+Đối với kiểu mảng, thì con trỏ sẽ mặc định lấy địa chỉ và giá trị của biến đầu tiên. Vậy để lấy biến tiếp theo ta đơn giản chỉ cần cộng `ptr` với số thứ tự nhân kích thước kiểu dữ liệu.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    char arr_txt[] = "ADVANCED_C_CPP";
+
+    void *ptr = &arr_txt;
+    printf("In kí tự đầu tiên và thứ 2\n");
+    printf("Value is: %c and adress is %p\n", *(char*)(ptr), ptr);
+    printf("Value is: %c and adress is %p\n", *(char*)(ptr+1), ptr+1);
+
+    int arr_num[] = {15,52,36,47,85};
+
+    ptr = &arr_num;
+
+    printf("In số đầu tiên và thứ 2\n");
+    printf("Value is: %d and adress is %p\n", *(char*)(ptr), ptr);
+    printf("Value is: %d and adress is %p\n", *(char*)(ptr+4), ptr+4);
+
+    return 0;
+}
+```
+```
+In kí tự đầu tiên và thứ 2
+Value is: A and adress is 0x7ffff32d9dd9
+Value is: D and adress is 0x7ffff32d9dda
+In số đầu tiên và thứ 2
+Value is: 15 and adress is 0x7ffff32d9dc0
+Value is: 52 and adress is 0x7ffff32d9dc4
+```
+Đối với kiểu `char` địa chỉ của 2 kí tự cách nhau 1 bytes do kích thước của kiểu `char`, đường tương tự về kiểu `int`. Dựa vào đặc tính ấy ta có thể viết một chương trình để lấy toán bộ phần tử trong mảng.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    char arr_txt[] = "ADVANCED";
+
+    void *ptr = &arr_txt;
+    printf("In mảng kí tự\n");  
+    for(int i = 0; i<(sizeof(arr_txt)/sizeof(arr_txt[0])); i++)
+    {
+        printf("Value is: %c and adress is %p\n", *(char*)(ptr+i), ptr+i);
+    }
+
+    int arr_num[] = {15,52,36,47,85};
+
+    ptr = &arr_num;
+
+    printf("In mảng số \n");
+    for(int i = 0; i<(sizeof(arr_num)/sizeof(arr_num[0])); i++)
+    {
+        printf("Value is: %d and adress is %p\n", *(int*)(ptr+(i*4)), ptr+(i*4));
+    }
+
+    return 0;
+}
+```
+```
+In mảng kí tự
+Value is: A and adress is 0x7fff49a3ee0f
+Value is: D and adress is 0x7fff49a3ee10
+Value is: V and adress is 0x7fff49a3ee11
+Value is: A and adress is 0x7fff49a3ee12
+Value is: N and adress is 0x7fff49a3ee13
+Value is: C and adress is 0x7fff49a3ee14
+Value is: E and adress is 0x7fff49a3ee15
+Value is: D and adress is 0x7fff49a3ee16
+Value is:
+In mảng số 
+Value is: 15 and adress is 0x7fff49a3edf0
+Value is: 52 and adress is 0x7fff49a3edf4
+Value is: 36 and adress is 0x7fff49a3edf8
+Value is: 47 and adress is 0x7fff49a3edfc
+Value is: 85 and adress is 0x7fff49a3ee00
+```
+Ta thể thấy đối với mảng chuỗi ở địa chỉ cuối là một kí tự kiểu null. Đây là cách để chuỗi có thể phát hiện điểm kết thúc của chuỗi
+
+
 </details>
 
 <details>
