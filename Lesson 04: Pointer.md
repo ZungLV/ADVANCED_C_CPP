@@ -2,6 +2,9 @@
   <summary><strong>👆 Pointer </strong></summary>
 
 <details>
+  <summary><strong>🎯 Tổng quan về pointer </strong></summary>
+
+<details>
   <summary><strong>📝 Giới thiệu về pointer </strong></summary>
   
 
@@ -30,7 +33,7 @@ Cách nhận biết đơn giản nhất giữa kiểu con trỏ và một kiểu
 int x = 10;
 int *int_ptr = &x;
 ```
-Chỉ có thể lấy địa chỉ của một biến đã tồn tại, khai báo từ trước. Để lấy địa chỉ ta đơn giản viết `&` đi cùng với biến mong muốn (trong ví dụ trên là biến `x`) và để con trỏ của ta `*int_ptr` trỏ vào đó. Biến `int_ptr` khi này đã thành công lưu trữ địa chỉ của biến `x` sẵn sàng cho việc thao tác sau này.
+Chỉ có thể lấy địa chỉ của một biến đã tồn tại, khai báo từ trước. Để lấy địa chỉ ta đơn giản viết `&` đi cùng với biến mong muốn (trong ví dụ trên là biến `x`) và để con trỏ của ta `int_ptr` trỏ vào đó. Biến `int_ptr` khi này đã thành công lưu trữ địa chỉ của biến `x` sẵn sàng cho việc thao tác sau này.
 
 ### Truy cập giá trị (giải tham chiếu - dereference)
 
@@ -43,13 +46,13 @@ Cuối cùng sau khi đã khai báo và lưu địa chỉ thành công, ta tiế
 
 + `int_ptr`: chứa địa chỉ của `x`, `int_ptr = 0x01`
 
-+ `*int_ptr`: trỏ vào giá trị của `x`, `*int_ptr = *(0x01) = 10`
++ `*int_ptr`: lấy giá trị tại địa chỉ int_ptr trỏ vào, `*int_ptr = *(0x01) = 10`
 
 + `y`: bằng với giá trị của `x`, `y = 10`
 
 ### Thay đổi giá trị gián tiếp
 
-Thay vì trực tiếp thay đổi giá trị của `x` ta có thể dùng con trỏ `*int_ptr` để làm điều đó:
+Thay vì trực tiếp thay đổi giá trị của `x` ta có thể dùng con trỏ `int_ptr` để làm điều đó:
 
 ```c
 #include <stdio.h>
@@ -92,7 +95,7 @@ Như vậy ta có thể thấy rằng:
 
 + Giá trị của `y` truy cập thông qua con trỏ `*int_ptr` bằng đúng với giá trị của `x` là 10
 
-+ Giá trị của `x` mới bằng đúng với giá trị sau khi thay đổi con trỏ `*int_ptr` là 100
++ Giá trị của `x` mới bằng đúng với giá trị sau khi thay đổi con trỏ `int_ptr` là 100
 
 </details>
 
@@ -127,11 +130,6 @@ Như ta đã thấy dù con trỏ có là kiểu int, char, double đi chăng n�
 
 <details>
   <summary><strong>📌 Địa chỉ của pointer </strong></summary>
-
-
-    Hiệu suất phần cứng: Một số kiến trúc máy tính như x86 (Intel) sử dụng Little Endian vì thuận lợi khi làm việc với các số nhỏ (byte ít quan trọng nhất là phần đầu tiên, xử lý dễ dàng hơn).
-
-    Phát triển hệ thống: Hệ thống Big Endian đôi khi được sử dụng trong các hệ thống như Motorola 68000 hay PowerPC. Một số giao thức mạng như TCP/IP cũng sử dụng Big Endian.
 
 Thực chất khi một biến không được cấp phát 1 địa chỉ mà các địa chỉ 8 bits liên tiếp do máy chỉ lưu trữ được địa chỉ 8 bits.
 
@@ -200,10 +198,91 @@ int main()
 }
 ```
 ```c
-value a is: 20
+dvalue a is: 20
 value b is: 10
 ```
 Sau khi sử dụng hàm thì hai biến `a` và `b` đã hoán đổi giá trị cho nhau.
+</details>
+
+</details>
+
+
+<details>
+  <summary><strong>👥 Các loại con trỏ </strong></summary>
+
+<details>
+  <summary><strong> Void pointer </strong></summary>
+Void pointer là một con trỏ có thể trỏ vô mọi kiểu dữ liệu mà không cần biết kiểu dữ liệu đó là gì.
+  
+Cú pháp: `void *ptr;`
+
+Vì có thể truy cập mọi kiểu dữ liệu nên về bản chất con trỏ `void` không thuộc bất kì kiểu dữ liệu nào cả. Như ta đã biết, để có thể trích xuất dữ liệu từ một biến được trỏ vào, ta dựa vào kiểu dữ liệu của con trỏ để có thể xác định sẽ có bao nhiêu bytes dữ liệu được đọc. Do đó, nhược điểm của kiểu `void` là việc không thể truy xuất dữ liệu trực tiếp. Để có thể truy xuất dữ liệu thông qua con trỏ `void` ta cần phải ép kiểu thích hợp.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int value = 5;
+
+    void *ptr = &value;
+    printf("value is: %d\n", *(int*)(ptr));
+
+    return 0;
+}
+```
+Ta có cú pháp sau ` printf("value is: %d\n", *(int*)(ptr));`:
+
++ `*`: Lấy giá trỉ mà được `ptr` trỏ tới
+
++ `(int*)(ptr)`: Ép kiểu con trỏ thành kiểu `int`
+
+Như vậy đoạn code trên sẽ giúp lấy ra giá trị mà `ptr` đã được ép kiểu `int` trỏ tới
+```
+value is: 5
+```
+Tuy nhiêu ưu điểm lớn nhất mà `void` lại được sử dụng chính là việc nó có thể truy cập nhiều kiểu dữ liệu khác nhau
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int value = 5;
+    char letter = 'x';
+    double number = 10.5;
+
+    void *ptr = &value;
+    printf("Size of sizeof pointer: %ld bytes\n", sizeof(ptr));
+    printf("value is: %d\n", *(int*)(ptr));
+    printf("address is: %p\n", ptr); // %p là cú pháp lấy địa chỉ
+
+    ptr = &letter;
+    printf("value is: %c\n", *(char*)(ptr));
+    printf("address is: %p\n", ptr); 
+
+    ptr = &number;
+    printf("value is: %f\n", *(double*)(ptr));
+    printf("address is: %p\n", ptr);
+
+    return 0;
+}
+```
+```
+Size of sizeof pointer: 8 bytes
+value is: 5
+address is: 0x7ffeccdca154
+value is: x
+address is: 0x7ffeccdca153
+value is: 10.500000
+address is: 0x7ffeccdca158
+```
+Qua đoạn code trên ta có thể thấy ptr đã trỏ qua từng kiểu `int`, `char`, `double` lấy được địa chỉ và giá trị của chúng. Thay vì phải tạo ra từng kiểu con trỏ một và tốn 8 bytes bộ nhớ cho mỗi con trỏ, việc chỉ sử dụng mỗi một con trỏ kiểu `void` giúp ta tiết kiệm đáng kể bộ nhớ phải sài.
+</details>
+
+<details>
+  <summary><strong> Function pointer </strong></summary>
+
 </details>
 
 </details>
