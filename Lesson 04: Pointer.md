@@ -587,5 +587,33 @@ Multiple of 5 and 10 is: 50
 5 divided by 10 is: 0.500000 
 ```
 </details>
+<details>
+  <summary><strong> Pointer to Constant </strong></summary>
+Là cách định nghĩa một con trỏ không thể thay đổi giá trị tại địa chỉ mà nó trỏ đến thông qua dereference nhưng giá trị tại địa chỉ đó có thể thay đổi. Con trỏ này hoàn toàn có thể trỏ vào con trỏ khác có cùng kiểu dữ liệu.
+Cú pháp:
 
+  
+```c
+<data_type> const *ptr_const;
+const <data_type> *ptr_const;
+```
+
+Con trỏ này có ứng dụng trong việc bảo vệ dữ liệu không bị thay đổi trong quá trình thực thi. Sử dụng khi muốn trỏ vào những vùng thông tin mà không làm thay đổi chúng.
+</details>
+<details>
+  <summary><strong> Constant Pointer </strong></summary>
+Ngược lại với con trỏ hằng là hằng con trỏ. Khác với con trỏ hằng, constant pointer có thể thay đổi giá trị tại địa chỉ mà nó trỏ tới. Tuy nhiên con trỏ này chỉ có thể trỏ đến một địa chỉ duy nhất.
+Cú pháp 
+  
+```c
+int *const const_ptr = &value;
+```
+Được ứng dụng để tránh việc thay đổi địa chỉ của một biến hay một thanh ghi có sẵn
+
+Vậy nếu muốn vừa báo vệ giá trị lẫn địa chỉ không bị thay đổi khi trỏ vào, ta sử dụng kết hợp cả hai loại con trỏ trên. Cú pháp như sau:
+
+```c
+const int *const ptr;
+```
+</details>
 </details>
