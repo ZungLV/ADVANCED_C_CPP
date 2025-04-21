@@ -388,12 +388,204 @@ Value is: 85 and adress is 0x7fff49a3ee00
 ```
 Ta thể thấy đối với mảng chuỗi ở địa chỉ cuối là một kí tự kiểu null. Đây là cách để chuỗi có thể phát hiện điểm kết thúc của chuỗi
 
+Ngoài ra ta còn có thể tạo ra một mảng `void` để lưu trữ nhiều kiểu dữ liệu khác nhau
 
+```c
+#include <stdio.h>
+
+int main()
+{
+    int num = 55;
+    double value = 12.8;
+    char text = 'x';
+    void *ptr[] = {&num, &value, &text};
+    printf("Value of int is: %d and adress is %p\n", *(int*) ptr[0], ptr[0]);
+    printf("Value of double is: %f and adress is %p\n", *(double*) ptr[1], ptr[1]);
+    printf("Value of char is: %c and adress is %p\n", *(char*) ptr[2], ptr[2]);
+    return 0;
+}
+```
+Đối với kiểu mảng phần tử đầu tiên luôn bắt đầu từ 0 do đó  `ptr[0]` sẽ trỏ vào phần tử đầu tiên trong mảng là `num` 
+```
+Value of int is: 55 and adress is 0x7fff12166e34
+Value of double is: 12.800000 and adress is 0x7fff12166e38
+Value of char is: x and adress is 0x7fff12166e33
+```
+Như vậy cứ tương ứng với mỗi phần tử trong mảng sẽ là địa chỉ và giá trị của biến tương ứng tại vị trí đó
 </details>
 
 <details>
   <summary><strong> Function pointer </strong></summary>
+Khác với con trỏ khác con trỏ hàm là một biến mà giữ địa chỉ của một hàm. Điều đó nghĩa là, nó trỏ đến vùng nhớ trong bộ nhớ chứa mã máy của hàm được định nghĩa trong chương trình.
+  
+Trong ngôn ngữ lập trình C, con trỏ hàm cho phép bạn truyền một hàm như là một đối số cho một hàm khác, lưu trữ địa chỉ của hàm trong một cấu trúc dữ liệu, hoặc thậm chí truyền hàm như một giá trị trả về từ một hàm khác.
+```c
+<return_type> (*func_pointer)(<data_type_1>, <data_type_2>)
+```
+Tuy nhiên khác với con trỏ `void` con trỏ hàm buộc phải:
++ Phải giống với kiểu trả về của hàm được trỏ
++ Phải cùng có chung số lượng các tham số
++ Các tham số phải có cùng kiểu dữ liệu tương ứng
 
+```c
+#include <stdio.h>
+
+// Hàm int
+int print_int(){ printf("int function!\n"); }
+
+// Hàm mẫu 2
+double print_double(){ printf("double function!\n"); }
+
+int main()
+{
+    // Khai báo con trỏ hàm
+    int (*ptr_int)();
+    double (*ptr_double)();
+    // Gán địa chỉ của hàm cho con trỏ hàm
+    ptr_int = print_int;
+    ptr_double = print_double;
+    // Gọi hàm thông qua con trỏ hàm
+    ptr_int();  
+    ptr_double();
+    return 0;
+}
+```
+```
+int function!
+double function!
+```
+Nếu đáp ứng đủ các yêu cầu trên thì một con trỏ có thể trỏ đến các hàm có cùng dữ liệu trả về và giống nhau về số lượng cũng như đặc điểm của các tham số.
+```c
+#include <stdio.h>
+
+// Các hàm mẫu
+void morning(){ printf("Good morning\n"); }
+void afternoon(){ printf("Good afternoon\n"); }
+void evening(){ printf("Good evening\n"); }
+
+int main()
+{
+    // Khai báo con trỏ hàm
+    void (*ptr)();
+    // Gán địa chỉ của hàm cho con trỏ hàm và gọi hàm
+    ptr = &morning;
+    ptr();
+    // Gán địa chỉ của hàm cho con trỏ hàm và gọi hàm
+    ptr = afternoon;
+    (*ptr)();
+    // Gán địa chỉ của hàm cho con trỏ hàm và gọi hàm
+    ptr = &evening;
+    (*ptr)();
+    return 0;
+}
+```
+Ngoài ra khi dùng con trỏ lấy địa chỉ ta không cần đặt dấu `&` trước hàm cần lấy. Đồng thời khi gọi hàm con trỏ ta còn có thể sử dụng cú pháp `(*func_pointer)(<data_type_1>, <data_type_2>)`
+```
+Good morning
+Good afternoon
+Good evening
+```
+### Ứng dụng function pointer để tạo một hàm dùng để sử dụng các hàm khác
+Như ta đã biết thì ta có thể truyền con trỏ vào hàm với mong muốn thay đổi giá trị thông qua các tính toán trong hàm. Và ta hoàn toàn có thể truyền function pointer vào một hàm bất kì luôn. Ví dụ ở một đoạn khai báo hàm như sau.
+```c
+#include <stdio.h>
+
+void sum(int a, int b)
+{
+    printf("Sum of %d and %d is: %d\n",a,b, a+b);
+}
+
+void subtract(int a, int b)
+{
+    printf("Subtract of %d by %d is: %d \n",a,b, a-b);
+}
+
+void multiple(int a, int b)
+{
+    printf("Multiple of %d and %d is: %d \n",a,b, a*b );
+}
+
+void divide(int a, int b)
+{
+    printf("%d divided by %d is: %f \n",a,b, (double)a/b);
+}
+
+void calculator(void (*ptr)(int, int), int a, int b)
+{
+    printf("Program calculate: \n");
+    ptr(a,b);
+}
+```
+Ta có thể thấy các hàm `sum`,`subtract`,`multiple`,`divide` đều có cùng đặc diểm. Vì vậy hàm `void calculator` được tạo ra để tận dụng điều đó. Với con trỏ hàm `ptr` sẽ được sử dụng để trỏ vào bất cứ hàm nào trong 4 hàm trên miễn là hàm đó được truyền vào hàm `calculator` khi gọi. Sau đó hàm `calculator` sẽ thực hiện đúng chức năng của hàm được truyền vào sử dùng con trỏ hàm `ptr` và các tham số `a` và `b`
+Đoạn code hoàn chỉnh
+```c
+#include <stdio.h>
+
+void sum(int a, int b)
+{
+    printf("Sum of %d and %d is: %d\n",a,b, a+b);
+}
+
+void subtract(int a, int b)
+{
+    printf("Subtract of %d by %d is: %d \n",a,b, a-b);
+}
+
+void multiple(int a, int b)
+{
+    printf("Multiple of %d and %d is: %d \n",a,b, a*b );
+}
+
+void divide(int a, int b)
+{
+    printf("%d divided by %d is: %f \n",a,b, (double)a/b);
+}
+
+void calculator(void (*ptr)(int, int), int a, int b)
+{
+    printf("Program calculate: \n");
+    ptr(a,b);
+}
+
+int main()
+{
+    calculator(sum,5,10);
+    calculator(subtract,5,10);
+    calculator(multiple,5,10);
+    calculator(divide,5,10);
+    return 0;
+}
+
+```
+```
+Program calculate: 
+Sum of 5 and 10 is: 15
+Program calculate: 
+Subtract of 5 by 10 is: -5 
+Program calculate: 
+Multiple of 5 and 10 is: 50 
+Program calculate: 
+5 divided by 10 is: 0.500000 
+```
+Ngoài ra ta hoàn toàn có thể khai báo một con trỏ hàm kiểu mảng và mỗi lần gọi một phần tử trong hàm là ta được một hàm tương ứng
+
+```c
+int main()
+{
+    void (*calculator[])(int, int) = {sum,subtract,multiple,divide} ;   
+    calculator[0](5,10);
+    calculator[1](5,10);
+    calculator[2](5,10);
+    calculator[3](5,10);
+    return 0;
+}
+```
+```
+Sum of 5 and 10 is: 15
+Subtract of 5 by 10 is: -5 
+Multiple of 5 and 10 is: 50 
+5 divided by 10 is: 0.500000 
+```
 </details>
 
 </details>
