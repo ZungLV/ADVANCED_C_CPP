@@ -598,17 +598,24 @@ Cú pháp:
 const <data_type> *ptr_const;
 ```
 
-Con trỏ này có ứng dụng trong việc bảo vệ dữ liệu không bị thay đổi trong quá trình thực thi. Sử dụng khi muốn trỏ vào những vùng thông tin mà không làm thay đổi chúng.
+Con trỏ này có ứng dụng trong việc bảo vệ dữ liệu không bị thay đổi trong quá trình thực thi. Sử dụng khi muốn trỏ vào những vùng thông tin mà không làm thay đổi chúng. Khi cố gắng thay đổi dữ liệu bằng con trỏ chương trình sẽ báo lỗi sau:
+```
+error: assignment of read-only location 
+```
 </details>
 <details>
   <summary><strong> Constant Pointer </strong></summary>
 Ngược lại với con trỏ hằng là hằng con trỏ. Khác với con trỏ hằng, constant pointer có thể thay đổi giá trị tại địa chỉ mà nó trỏ tới. Tuy nhiên con trỏ này chỉ có thể trỏ đến một địa chỉ duy nhất.
-Cú pháp 
+Cú pháp:
   
 ```c
 int *const const_ptr = &value;
 ```
-Được ứng dụng để tránh việc thay đổi địa chỉ của một biến hay một thanh ghi có sẵn
+Được ứng dụng để tránh việc thay đổi địa chỉ của một biến hay một thanh ghi có sẵn. Khi cố gắng truy cập vào địa chỉ khác bằng con trỏ chương trình sẽ báo lỗi sau:
+
+```c
+error: assignment of read-only variable 
+```
 
 Vậy nếu muốn vừa báo vệ giá trị lẫn địa chỉ không bị thay đổi khi trỏ vào, ta sử dụng kết hợp cả hai loại con trỏ trên. Cú pháp như sau:
 
