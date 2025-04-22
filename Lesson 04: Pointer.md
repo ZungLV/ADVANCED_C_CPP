@@ -623,4 +623,96 @@ Vậy nếu muốn vừa báo vệ giá trị lẫn địa chỉ không bị tha
 const int *const ptr;
 ```
 </details>
+<details>
+  <summary><strong> Pointer to Pointer </strong></summary>
+Con trỏ đến con trỏ (Pointer to Pointer) là một kiểu dữ liệu trong ngôn ngữ lập trình cho phép bạn lưu trữ địa chỉ của một con trỏ. 
+  
+Con trỏ đến con trỏ cung cấp một cấp bậc trỏ mới, cho phép bạn thay đổi giá trị của con trỏ gốc. Cấp bậc này có thể hữu ích trong nhiều tình huống, đặc biệt là khi bạn làm việc với các hàm cần thay đổi giá trị của con trỏ.
+
+Ví dụ:
+```c
+    int value = 42;
+    int *ptr1 = &value;  // Con trỏ thường trỏ đến một biến
+    int **ptr2 = &ptr1;  // Con trỏ đến con trỏ
+```
+Ta có `value` là biến chứa giá trị, `*ptr1` là con trỏ cấp một chứa địa chỉ của `value`, `**ptr2` là con trỏ cấp 2 chứa địa chỉ của `*ptr1`. Như ta đã biết dereference `*ptr1 = value`  và ta sẽ được `*ptr1 = 42`. Tương tự với con trỏ cấp 2 `**ptr2 = *ptr1` hoặc ta có thể hiểu là `*(*ptr2) = *ptr1`. Khi này `(*ptr2)` chính là địa chỉ của `value` mà `ptr1` giữ, dereference tiếp ta sẽ được `**ptr2 = *ptr1 = value = 42`. Như vậy càng nhiều `*` thì cấp càng cao và số bước phải đi càng nhiều hơn.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int value = 42;
+    int *ptr1 = &value;  // Con trỏ thường trỏ đến một biến
+    int **ptr2 = &ptr1;  // Con trỏ đến con trỏ
+
+    /*
+        **ptr2 = &ptr1
+        ptr2 = &ptr1;
+        *ptr2 = ptr1 = &value;
+        **ptr2 = *ptr1 = value
+    */
+
+    printf("address of value: %p\n", &value);
+    printf("value of ptr1: %p\n", ptr1);
+
+    printf("address of ptr1: %p\n", &ptr1);
+    printf("value of ptr2: %p\n", ptr2);
+
+    printf("dereference ptr2 first time: %p\n", *ptr2);
+    printf("dereference ptr2 second time: %d\n", **ptr2);
+
+    return 0;
+}
+```
+```c
+address of value: 0x7fff8a765604
+value of ptr1: 0x7fff8a765604
+address of ptr1: 0x7fff8a765608
+value of ptr2: 0x7fff8a765608
+dereference ptr2 first time: 0x7fff8a765604
+dereference ptr2 second time: 42
+```
+Ứng dụng trong các cấu trúc dữ liệu như danh sách liên kết hay thao tác với các định dạng dữ liệu như JSON
+</details>  
+<details>
+  <summary><strong> NULL Pointer </strong></summary>
+Null Pointer là một con trỏ không trỏ đến bất kỳ đối tượng hoặc vùng nhớ cụ thể nào.
+  
+Trong ngôn ngữ lập trình C, một con trỏ có thể được gán giá trị NULL để biểu diễn trạng thái null, C++ (NULL, nullptr).
+
+Sử dụng null pointer thường hữu ích để kiểm tra xem một con trỏ đã được khởi tạo và có trỏ đến một vùng nhớ hợp lệ chưa. Tránh dereferencing (sử dụng giá trị mà con trỏ trỏ đến) một null pointer là quan trọng để tránh lỗi chương trình.
+
+```c
+#include <stdio.h>
+
+int main()
+{
+    int *ptr = NULL;  // Gán giá trị NULL cho con trỏ 0x0000000
+    int x;
+
+    if (ptr == NULL)
+    {
+        printf("Pointer is NULL\n");
+    }
+    else
+    {
+        printf("Pointer is not NULL\n");
+    }
+
+    int score_game = 5;
+    if (ptr == NULL)
+    {
+        ptr = &score_game;
+        *ptr = 30;
+        ptr = NULL;
+    }
+    return 0;
+}
+
+```
+```c
+Pointer is NULL
+```
+</details>
 </details>
