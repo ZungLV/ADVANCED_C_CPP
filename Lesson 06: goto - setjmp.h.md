@@ -84,7 +84,7 @@ Khi chương trình nhảy lung tung giữa các vị trí, người đọc ph�
 <details>
   <summary><strong> setjmp.h </strong></summary>
   
-setjmp.h` là một thư viện trong ngôn ngữ lập trình C, cung cấp hai hàm chính là `setjmp` và `longjmp`. `setjmp` và `longjmp` dùng để lưu và khôi phục trạng thái thực thi (program state), giúp chương trình "nhảy" về một điểm đã lưu trước đó. Đây là một cách xử lý nhảy xa (non-local jump), giống như goto, nhưng mạnh hơn vì nó nhảy giữa các hàm khác nhau.
+`setjmp.h` là một thư viện trong ngôn ngữ lập trình C, cung cấp hai hàm chính là `setjmp` và `longjmp`. `setjmp` và `longjmp` dùng để lưu và khôi phục trạng thái thực thi (program state), giúp chương trình "nhảy" về một điểm đã lưu trước đó. Đây là một cách xử lý nhảy xa (non-local jump), giống như goto, nhưng mạnh hơn vì nó nhảy giữa các hàm khác nhau.
 
 `setjmp(jmp_buf env)`: Lưu trạng thái chương trình vào biến `env` để có thể quay lại bằng longjmp.
 + Trả về 0 khi được gọi lần đầu.
