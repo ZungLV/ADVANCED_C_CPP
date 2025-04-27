@@ -275,7 +275,9 @@ int main(int argc, char const *argv[])
 }
 ```
 ```
+ERROR! Không tồn tại
+Hello world
 ```
 ### Sự khác biệt giữa TRY - CATCH - THROW và ASSERT
-Khi hàm `assert` tìm ra được lỗi, nó sẽ dừng hẳn toàn bộ chương trình kể cả các chương trình sau `assert` có lỗi hay không. Còn đối với xử lý ngoại lệ thì kể cả khi phát hiện ra lỗi vẫn sẽ tiếp tục thực thi các chương trình không liên quan tới lỗi.
+Khi hàm `assert` tìm ra được lỗi, nó sẽ dừng hẳn toàn bộ chương trình kể cả các chương trình sau `assert` có lỗi hay không. Còn đối với xử lý ngoại lệ thì kể cả khi phát hiện ra lỗi vẫn sẽ tiếp tục thực thi các chương trình không liên quan tới lỗi. Như ở ví dụ trên vẫn in ra `Hello world` kể cả khi phát hiện ra lỗi.
 </details>
