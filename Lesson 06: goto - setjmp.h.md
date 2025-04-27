@@ -226,7 +226,7 @@ int exception_code;
 typedef enum
 {
     NO_ERROR,
-    NO_EXIT,
+    NO_EXIST,
     DIVIDE_BY_0
 } ErrorCodes;  
 
@@ -240,7 +240,7 @@ double divide(int a, int b)
     //Khối lệnh trả về ngoại lệ
     if (a == 0 && b == 0)
     {
-        THROW(NO_EXIT);      //longjmp(buf, NO_EXIT), trả về exception_code = NO_EXIT
+        THROW(NO_EXIST);      //longjmp(buf, NO_EXIST), trả về exception_code = NO_EXIST
     }
     else if (b == 0)
     {
@@ -260,7 +260,7 @@ int main(int argc, char const *argv[])
     {
         printf("Ket qua: %0.3f\n", divide(0,0));  //Gọi hàm divide() cũng là hàm có khả năng có lỗi
     }
-    CATCH(NO_EXIT)      //else if (exception_code == NO_EXIT)
+    CATCH(NO_EXIST)      //else if (exception_code == NO_EXIST)
     {
         printf("ERROR! Không tồn tại\n");
     }
