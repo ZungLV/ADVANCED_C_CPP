@@ -33,4 +33,30 @@ int main(int argc, char const *argv[])
 Khi liên kết `main.c` và `test.c` thành một file thực thi, chương trình sẽ tìm các hàm và biến được khai báo lại bằng `extern` ở file `main.c` ở file `test.c`. Extern chỉ cho phép ta **khai báo lại chứ không cho phép ta định nghĩa lại**.
 Như ở ví dụ trên ta chỉ được phép khai báo `extern int var_global;` chứ không được định nghĩa `extern int var_global = 10;`. Sau khi được khai báo lại biến và hàm vẫn sẽ được giữ nguyên **giá trị** cũng như **địa chỉ** được cấp phát của mình như đã được khai báo ở file gốc.
 
+Một trong những cách sử dụng `extern` phổ biến là sử dụng chung với file header. Ví dụ đối với file `test.c` ở trên ta có một file `test.h` như sau:
+```c
+#ifndef TEST_H
+#define TEST_H
+
+extern int var_global;
+
+void display();
+
+#endif
+```
+Khi ta thêm `include` file header vào `main.c` thì sau tiền xử lý nó sẽ sao chép toàn bộ file header vào file `main.c`. Vậy ta có file `main.c` như sau:
+
+```c
+#include <stdio.h>
+#include "test.h"
+
+int main(int argc, char const *argv[])
+{
+    display();
+    return 0;
+}
+```
+Với việc đã khai báo các hàm và biến ở file header rồi, ta không cần phải khai báo ở file `main.c` nữa do các hàm và biến sẽ được sao chép và khai báo lại. Ở đây ta thấy hàm `display` trong file `test.h` không khai báo `extern` do các hàm trong C không cần thiết phải khai báo `extern` để có thể sử dụng lại. Tuy nhiên các biến nếu muốn được sử dụng ở nhiều hàm khác nhau thì phải sử dụng `extern`
+
+
 </details>
