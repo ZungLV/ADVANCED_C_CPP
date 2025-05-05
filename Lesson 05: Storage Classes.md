@@ -179,3 +179,106 @@ Cả bốn hàm trên đều là hàm toàn cục, ta chỉ muốn người dùn
 Ngoài ra static global còn được dùng để giúp tránh xung đột tên biến khi làm việc với nhiều file. Thường sẽ được áp dụng khi có nhiều file tính toán sử dụng các biến giống nhau, việc sử dụng static global sẽ phù hợp nhất nếu các biến này chỉ được sử dụng trong các file đấy chứ không được lấy ra sử dụng ở file khác.
 </details>
 </details>
+<details>
+  <summary><strong> Volatile </strong></summary>
+Từ khóa volatile trong ngôn ngữ lập trình C/C++ được sử dụng để báo hiệu cho trình biên dịch rằng một biến có thể thay đổi ngẫu nhiên, ngoài sự kiểm soát của chương trình.
+  
+Volatile giúp ngăn chặn trình biên dịch tối ưu hóa hoặc xóa bỏ các thao tác trên biến đó, giữ cho các thao tác trên biến được thực hiện như đã được định nghĩa.
+
+Cú pháp:
+
+`volatile int flag = 0;`
+
+Volatile thường được sử dụng đối với các biến mà có thể bị thay đổi bởi nút bấm, bởi ngắt ngoài hoặc các thiết bị bên ngoài như cảm biến. Do những sự thay đổi này là ngẫu nhiên máy không biết nên thường tối ưu hóa giữ nguyên giá trị, để tránh việc này xảy ra ta sử dụng `volatile`
+</details>
+<details>
+  <summary><strong> Register </strong></summary>
+  
+ Chương trình thực hiện các phép tính toán thông qua 3 khối: **ALU, Register, RAM**
+
+ ![image](https://github.com/user-attachments/assets/3fa72781-886a-400f-a932-97ad25c6d2aa)
+
+  Từ đó ta có bốn bước thực hiện các phép tính toán như sau:
+
+**Bước 1:** Nạp giá trị từ RAM vào thanh ghi, giá của biến `i` và phép toán sẽ được nạp vào thanh ghi tương ứng **R1 và R2**
+![image](https://github.com/user-attachments/assets/e54e24d4-9679-4738-820d-9c99997e0492)
+
+**Bước 2:** Chuyển dữ liệu từ thanh ghi vào ALU (bộ xử lý số học và logic), ALU chỉ nhận dữ liệu từ thanh ghi chứ không nhận từ RAM nên ta cần thanh ghi làm trung gian và các phép tính sẽ được thực hiện ở đây
+![image](https://github.com/user-attachments/assets/fb990d2c-625e-49f5-89a4-91242b112824)
+
+**Bước 3:** Chuyển dữ liệu tính được từ ALU vào thanh ghi, `i = 6` sau khi tính được sẽ lưu lại vào thanh ghi
+![image](https://github.com/user-attachments/assets/6aa09852-6dbc-4742-9f3e-0be7ec4fb0c0)
+
+**Bước 4:** Chuyển dữ liệu tính được từ thanh ghi vào RAM
+![image](https://github.com/user-attachments/assets/a9323b91-ddbe-4256-95de-e9b16da3f7b6)
+
+Các chương trình sau khi được biên dịch xong sẽ lưu ở trong bộ nhớ của máy còn đối với với vi sử lý thì các chương trình sẽ được lưu ở phân vùng flash dưới file **.hex**. Khi chương trình được thực thi thì dữ liệu được lưu trong bộ nhớ sẽ được nạp vào RAM
+
+![image](https://github.com/user-attachments/assets/5b93aad7-ae5e-4f3c-89da-69af35ce7b5a)
+
+Chương trình thường thực hiện theo 4 bước trên, để chương trình thực hiện nhanh hơn ta có thể bỏ qua 2 bước nạp từ RAM và chuyển lại vào RAM. Để thực hiện điều đó ta sẽ trực tiếp lưu biến trên thanh ghi. Trong ngôn ngữ lập trình C, từ khóa register được sử dụng để chỉ ra ý muốn của lập trình viên rằng một biến được sử dụng thường xuyên và có thể được lưu trữ trong một thanh ghi máy tính, chứ không phải trong bộ nhớ RAM. Việc này nhằm tăng tốc độ truy cập. 
+
+Cú pháp:
+
+`register int flag = 0;`
+
+So sánh tốc độ thực hiện của biến lưu trong RAM và biến lưu trong thanh ghi
+
+Biến lưu trong RAM
+```C
+#include <stdio.h>
+#include <time.h>
+
+int main()
+{
+   // Lưu thời điểm bắt đầu
+   clock_t start_time = clock();
+   int i;   // Biến i được lưu trong RAM
+
+   // Đoạn mã của chương trình
+   for (i = 0; i < 2000000; ++i){}
+
+   // Lưu thời điểm kết thúc
+   clock_t end_time = clock();
+
+   // Tính thời gian chạy bằng miligiây
+   double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+
+   printf("Thoi gian chay cua chuong trinh: %f giay\n", time_taken);
+   return 0;
+}
+```
+```
+Thoi gian chay cua chuong trinh: 0.001055 giay
+```
+Biến lưu trong thanh ghi
+```c
+#include <stdio.h>
+#include <time.h>
+
+int main()
+{
+   // Lưu thời điểm bắt đầu
+   clock_t start_time = clock();
+   register int i;   // Biến i được lưu trong RAM
+
+   // Đoạn mã của chương trình
+   for (i = 0; i < 2000000; ++i){}
+
+   // Lưu thời điểm kết thúc
+   clock_t end_time = clock();
+
+   // Tính thời gian chạy bằng miligiây
+   double time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+
+   printf("Thoi gian chay cua chuong trinh: %f giay\n", time_taken);
+   return 0;
+}
+```
+```
+Thoi gian chay cua chuong trinh: 0.000611 giay
+```
+Như vậy lưu trong thanh ghi giúp chương trình chạy nhanh hơn, ta nên sử dụng từ khóa `register` đối với các biến chỉ ưu tiên cho việc tính toán thôi chứ không có tác vụ nào khác cả
+
+Khi code trên các ide ta không thể khai báo `register` cho một biến toàn cục, do lưu trên thanh ghi sẽ không có địa chỉ, điều đó sẽ giảm tính linh hoạt của biến đi và đồng thời chiếm dụng mất một thanh ghi chỉ để lưu biến.
+</details>
