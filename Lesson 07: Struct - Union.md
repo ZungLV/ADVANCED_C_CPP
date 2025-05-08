@@ -185,7 +185,7 @@ Chúng ta sẽ phân tích từng phần một, đối với mảng `arr1` với
 
 ![image](https://github.com/user-attachments/assets/55a5972a-07a5-4098-aac9-f6d3f5e8e2f6)
 
-Đến mảng `arr2` lúc này các thành phần trong mảng có kích thước là 2 bytes nên cần được đặt ở vị trí chia hết cho 2, do ban đầu ở mảng arr1 đã được cấp phát 4 bytes còn dư 3 bytes nên 2 bytes tiếp theo sẽ được cấp phát cho `arr2[0]` còn dư 1 byte padding
+Đến mảng `arr2` lúc này các thành phần trong mảng có kích thước là 2 bytes nên cần được đặt ở vị trí chia hết cho 2, do ban đầu ở mảng arr1 đã được cấp phát 4 bytes (do arr3 có kích thước lớn nhất là 4 bytes) còn dư 3 bytes nên 2 bytes tiếp theo sẽ được cấp phát cho `arr2[0]` còn dư 1 byte padding
 
 ![image](https://github.com/user-attachments/assets/0bd89608-4009-4fdb-b97f-82d28d9e0ee2)
 
@@ -195,7 +195,57 @@ Cuối cùng sau khi cấp phát xong cả mảng `arr2` thì vẫn còn dư 2 b
 
 Như vậy kích thước của struct này là bằng 21 bytes dữ liệu cộng với 3 bytes padding là bằng 24 bytes cùng là bội số của kích thước của biến lớn nhất là 4 bytes luôn
 
-
-
 </details>
+</details>
+<details>
+  <summary><strong> Bit field </strong></summary>
+
+  Trong C, “**bit field**” (trường bit) là một thành phần đặc biệt của cấu trúc (struct) cho phép bạn chỉ định số lượng bit cụ thể dùng để lưu trữ một biến số nguyên. Thay vì sử dụng toàn bộ kích thước của một kiểu dữ liệu, bạn có thể “cắt nhỏ” bộ nhớ theo số bit cần thiết, giúp tiết kiệm không gian bộ nhớ và mô tả chính xác hơn ý nghĩa của dữ liệu (ví dụ: lưu trạng thái bật/tắt chỉ cần 1 bit).
+
+Ta có cú pháp như sau:
+
+```c
+struct name_struct 
+{
+    <data type 1> <member 1> : <number of bits>;
+    <data type 2> <member 2> : <number of bits>;
+    // ...
+};
+```
+Ví dụ mẫu
+
+```c
+struct Example 
+{
+    int32_t flag  : 1;	// chỉ sử dụng 1 trong 32 bit
+    int64_t count : 4;	// chỉ sử dụng 4 trong 64 bit
+};
+```
+
+Số bit mà ta chỉ định trực tiếp sẽ giới hạn phạm vi giá trị có thể lưu. Ví dụ: một bit field khai báo với : 3 có thể lưu các giá trị từ 0 đến 7 (đối với unsigned).
+
+Do khi sử dụng máy sẽ lấy ngẫu nhiên vị trí trong các bit có thể sử dụng nên không thể sử dụng toán tử lấy địa chỉ (&) trên  các thành viên bit field do máy không thể xác định được vị trí cụ thể.
+
+Bit field được sử dụng để giảm thiểu bộ nhớ mà ta cần phải sử dụng nhưng vẫn đạt được hiệu quả. Ví dụ ta có một kiểu **struct** như sau:
+
+```c
+typedef struct
+{
+    uint8_t  color  ;           /**< 2-bit cho màu sắc              */
+    uint8_t  power  ;           /**< 2-bit cho công suất            */
+    uint8_t engine ;           /**< 1-bit cho loại động cơ         */
+    uint8_t additionalOptions ;  /**< 3-bit cho các tùy chọn bổ sung */
+} CarOptions;
+```
+Như ở đây ta kiểu **CarOptions** sẽ có kích thước bằng tổng số bytes của các biến thành viên và bằng 4 bytes. Giờ ta áp dụng bit field cho kiểu trên.
+```c
+typedef struct
+{
+    CarColor  color  : 2;           /**< 2-bit cho màu sắc              */
+    CarPower  power  : 2;           /**< 2-bit cho công suất            */
+    CarEngine engine : 1;           /**< 1-bit cho loại động cơ         */
+    uint8_t additionalOptions : 3;  /**< 3-bit cho các tùy chọn bổ sung */
+} CarOptions;
+```
+Sau khi sử dụng bit field thì kích thước kiểu struct sẽ bằng tổng các thành viên bằng 8 bits hay bằng 1 bytes là giảm 4 lần so với ban đầu như vẫn thực hiện được yêu cầu đề ra.
 </details>
