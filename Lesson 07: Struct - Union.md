@@ -249,3 +249,75 @@ typedef struct
 ```
 Sau khi sử dụng bit field thì kích thước kiểu struct sẽ bằng tổng các thành viên bằng 8 bits hay bằng 1 bytes là giảm 4 lần so với ban đầu như vẫn thực hiện được yêu cầu đề ra.
 </details>
+<details>
+  <summary><strong> Union </strong></summary>
+  
+Trong ngôn ngữ lập trình C, union là một cấu trúc dữ liệu giúp lập trình viên kết hợp nhiều kiểu dữ liệu khác nhau vào **cùng một vùng nhớ**. Mục đích chính của union là tiết kiệm bộ nhớ bằng cách **chia sẻ cùng một vùng nhớ** cho các thành viên của nó. Điều này có nghĩa là, trong một thời điểm, chỉ một thành viên của union có thể được sử dụng. Điều này được ứng dụng nhằm tiết kiệm bộ nhớ.
+
+Cú pháp:
+```c
+union name_union 
+{
+    kieuDuLieu1 thanhVien1;
+    kieuDuLieu2 thanhVien2;
+    // ...
+};
+```
+Để truy suất các biến thành viên của **union** cũng dùng cú pháp giống **struct**, dùng ký tự `.` với biến thường và dùng `->` đối với biến con trỏ.
+
+Giống với **struct** là **union** cũng cấp phát lượng vùng nhớ bằng với biến thành viên có kích thước lớn nhất. Nhưng khác với **struct** vùng nhớ trong **uinion** chỉ được cấp phát **duy nhất một lần**.
+
+Ví dụ ta có kiểu dữ liệu **union** sau:
+
+```c
+union Data 
+{
+    uint8_t  a;
+    uint16_t b;
+    uint32_t c;
+};
+```
+
+Ta có `c` là biến thành viên lớn nhất và có kích thước 4 bytes nên kiểu **uinion** cũng có kích thước 4 bytes, ta có các biến sẽ sử dụng bộ nhớ như sau:
++ Biến `a` chỉ có 1 bytes nên chỉ sử dụng 1/4 bytes còn lại 3 padding
+![image](https://github.com/user-attachments/assets/75f34e4f-7d20-4172-9510-6eaa336df09e)
+
++ Biến `b` chỉ có 2 bytes nên chỉ sử dụng 2/4 bytes còn lại 2 padding  
+![image](https://github.com/user-attachments/assets/9b71bdfd-9836-425c-8b67-317623596eea)
+
++ Biến `c` có 4 bytes nên sử dụng đủ 4 bytes và không có padding
+![image](https://github.com/user-attachments/assets/5a290cc9-3db3-4ad4-8f55-77329b840f5b)
+
+**Lưu ý:** Các biến cũng phải đặt đúng vị trí phù hợp với yêu cầu của data alignment
+
+Ta có ví dụ khác như sau:
+```c
+union Data 
+{
+    uint8_t  a;	    // 1 + 15 padding 
+    uint16_t b[5];	// 10 + 6 padding
+    uint32_t c;	    // 4 + 12 padding
+    double   d;	    // 8 + 8 padding
+};
+```
+Ta có `d` là kiểu `double` và là biến lớn nhất trong các biến thành viên (8 bytes). Thế nên `Data` sẽ được cấp phát 8 bytes bộ nhớ. Biến `b` là dạng mảng có 5 phần tử kiểu `uint16_t`. Vậy tổng kích thước của `b` sẽ bằng 5x2 = 10 bytes > 8 bytes do đó `Data` sẽ được cấp phát bộ nhớ **2 lần** và có kích thước  bằng **16 bytes**.
+
+![image](https://github.com/user-attachments/assets/b1c952ca-7635-4684-97cc-966a9ba7900e)
+
++ Ta có `a` có kích thước 1 byte nên sẽ sử dụng **1 bytes còn 15 padding**
+
+![image](https://github.com/user-attachments/assets/e7bbaaab-59c6-4e85-8476-b5125ed6a81d)
+
++ Biến `b` sử dụng **10 bytes còn 15 padding**
+
+![image](https://github.com/user-attachments/assets/952a974b-3bcf-4e5e-bde6-2b18934694d6)
+
++ Biến `c` sử dụng **4 bytes còn 12 padding**
+
+![image](https://github.com/user-attachments/assets/3bdfc716-b3b1-43a3-bbe9-446dc4119a4e)
+
++ Biến `d` sử dụng **8 bytes còn 8 padding**
+
+![image](https://github.com/user-attachments/assets/20bb4253-af4c-4505-b7a4-ac7468d69bc1)
+
+</details>
