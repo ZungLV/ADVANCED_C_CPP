@@ -320,4 +320,70 @@ Ta có `d` là kiểu `double` và là biến lớn nhất trong các biến th�
 
 ![image](https://github.com/user-attachments/assets/20bb4253-af4c-4505-b7a4-ac7468d69bc1)
 
+Tuy nhiên vì **chia sẻ cùng 1 bộ nhớ** nên khi một biến thành viên trong **uinion** bị thay đổi thì các biến còn lại sẽ bị **ghi đè theo**
+
+Ví dụ
+```c
+#include <stdio.h>
+#include <stdint.h>
+
+typedef union
+{
+   uint8_t var1 ;
+   uint16_t var2 ;
+   uint32_t var3 ;
+
+} Data_Frame;
+
+void print_binary(uint32_t n) {      // Sử dụng phép dịch bit sang bên phải và and với 1 để lấy chính nó
+    for (int i = 31; i >= 0; i--) {
+        printf("%d", (n >> i) & 1);
+    }
+   printf("\n");
+}
+
+int main()
+{
+   Data_Frame data;
+
+   data.var3 = 0;
+   data.var1 = 0b11010100;
+   printf("var3 = "); print_binary(data.var3);
+
+   data.var3 = 0b11001111111111110000000011011111;   //  11001111    11111111   00000000   11011111
+   printf("var3 = "); print_binary(data.var3);
+
+   data.var2 = 0b1101010011110000;                   //  11010100    11110000
+   printf("var3 = "); print_binary(data.var3);
+
+   return 0;
+}
+```
+```
+var3 = 00000000000000000000000011010100
+var3 = 11001111111111110000000011011111
+var3 = 11001111111111111101010011110000
+```
+
+Ta có ba biến thành viên `var1`, `var2`, `var3`. Ban đầu biến `var3` bằng 0, khi ta gán `data.var1 = 0b11010100;`biến `var3` ngay lập tức bị ghi đè `11010100` vào ô nhớ đầu tiên. Khai báo `data.var3 = 0b11001111111111110000000011011111` thì biến `var3` đã ghi đè lại **toàn bộ bộ nhớ**. Khai báo `data.var2 = 0b1101010011110000;` thì `var3` đã bị ghi đè lại 2 ô nhớ đầu, còn lại vẫn giữ nguyên. Do vậy ta có các biến thành viên khi truy cập sẽ chỉ ghi đè lượng ô nhớ bằng đúng **kích thước kiểu biến của chính nó**.
+
+Union thường được sử dụng kết hợp với struct. Ví dụ như sau:
+
+```c
+typedef union
+{
+    struct
+    {
+        uint8_t id[2];
+        uint8_t data[4];
+        uint8_t check_sum[2];
+    } data;
+    uint8_t frame[8];
+} Data_Frame;
+```
+
+Khi ta thay đổi các biến thành viên trong kiểu struct `data` thì nó sẽ đều được lưu lại trong `frame` nhờ đặt tính của **union**, và từ đó ta có thể dễ dàng truyền đi dữ liệu thông qua `frame`
+
+![image](https://github.com/user-attachments/assets/9ee8d266-9183-4365-b165-7f510a5308d9)
+
 </details>
