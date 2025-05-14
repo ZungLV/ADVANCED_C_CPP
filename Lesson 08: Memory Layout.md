@@ -43,6 +43,15 @@ Tất cả các dữ liệu trong Text Segment đều **không thể bị thay �
 <details>
   <summary><strong> Data Segment </strong></summary>
 
+Chứa các biến toàn cục được khởi tạo với giá trị khác 0.
+
+Chứa các biến static (global + local) được khởi tạo với giá trị khác 0.
+Quyền truy cập là đọc và ghi, tức là có thể đọc và thay đổi giá trị của biến .
+
+Với compiler GCC/G++ (Windows): Data Segment còn lưu trữ biến hằng số toàn cục (const) và chuỗi hằng (string literal) nhưng quyền truy cập là chỉ đọc.
+
+Tất cả các biến sẽ được thu hồi sau khi chương trình kết thúc.
+
 </details>
 
 <details>
