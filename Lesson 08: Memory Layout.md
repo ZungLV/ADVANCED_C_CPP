@@ -95,6 +95,8 @@ Và ở trong **RAM**, bộ nhớ được chia thành 5 vùng để phục vụ
   +  Cần lưu trữ dữ liệu **lớn, linh hoạt và tồn tại lâu hơn phạm vi hàm**.
   
   +  Dữ liệu cần tồn tại sau khi hàm kết thúc, hoặc chia sẻ giữa các phần khác nhau của chương trình.
+
+  Quyền truy cập: có quyền đọc và ghi, nghĩa là có thể đọc và thay đổi giá trị của biến trong suốt thời gian chương trình chạy.
   
   <details>
     <summary><strong> stdlib.h </strong></summary>
@@ -105,17 +107,51 @@ Và ở trong **RAM**, bộ nhớ được chia thành 5 vùng để phục vụ
   +  `calloc()`:	Cấp phát bộ nhớ và tự động khởi tạo bằng 0
   +  `realloc()`:	Thay đổi kích thước vùng nhớ đã cấp phát
   +  `free()`:	Giải phóng vùng nhớ đã cấp phát
-  
-  </details>
-  
-  Tất cả các hàm này trả về **con trỏ đến vùng nhớ cấp phát**. Nếu không giải phóng thủ công bằng free(), chương trình sẽ bị **rò rỉ bộ nhớ (memory leak)**.
 
+  Tất cả các hàm này trả về **con trỏ đến vùng nhớ cấp phát**. Nếu không giải phóng thủ công bằng free(), chương trình sẽ bị **rò rỉ bộ nhớ (memory leak)**.
+  
   Đặc điểm hàm  `malloc()`:
   
   `void *malloc(size_t _Size)`
   
   + Tham số truyền vào: kích thước mong muốn ( byte)
   + Giá trị trả về: con trỏ void
+
+  Ta có một chương trình gọi **yêu cầu người dùng nhập tên, sau đó hiển thị tên vừa nhập** như sau:
+
+  ```c
+  #include <stdio.h>
+  #include <stdlib.h>
+
+  int main(int argc, char const *argv[])
+  {  
+     int soluongkytu = 0;
+     char *ten = (char*)malloc(sizeof(char) * soluongkytu);
+  
+     for (int i=0; i<3; i++)
+     {
+        printf("Nhập số lượng ký tự trong tên: \n");
+        scanf("%d", &soluongkytu);
+  
+        ten = realloc(ten, sizeof(char) * soluongkytu);
+  
+        printf("Nhập tên của bạn: \n");
+        scanf("%s", ten);
+  
+        printf("Hello %s\n\n", ten);
+     }
+  
+     return 0;
+  }
+  ```
+
+  Do `malloc()` trả về là con trỏ kiểu **void** nên khi dùng cần phải ép về đúng kiểu với dữ liệu mà mình muốn cấp phát động. Ở đây ta muốn cấp phát bộ nhớ cho tên là kiểu **chuỗi** nên sẽ **ép kiểu thành con trỏ kiểu char**:
+  
+  `char *ten = (char*)malloc(sizeof(char) * soluongkytu);`
+
+  Kích thước bộ nhớ được cấp phát động sẽ được tính bằng **kích thước kiểu dữ liệu** nhân với **số lượng kí tự** sẽ được số **bytes cần sử dụng** 
+  </details>
+  
 
   </details>
   
