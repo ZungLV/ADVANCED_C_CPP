@@ -127,7 +127,9 @@ Và ở trong **RAM**, bộ nhớ được chia thành 5 vùng để phục vụ
   {  
      int soluongkytu = 0;
      char *ten = (char*)malloc(sizeof(char) * soluongkytu);
-  
+
+     if (ten == NULL) return 0;
+
      for (int i=0; i<3; i++)
      {
         printf("Nhập số lượng ký tự trong tên: \n");
@@ -140,7 +142,9 @@ Và ở trong **RAM**, bộ nhớ được chia thành 5 vùng để phục vụ
   
         printf("Hello %s\n\n", ten);
      }
-  
+
+     free(ten);
+      
      return 0;
   }
   ```
@@ -149,7 +153,48 @@ Và ở trong **RAM**, bộ nhớ được chia thành 5 vùng để phục vụ
   
   `char *ten = (char*)malloc(sizeof(char) * soluongkytu);`
 
-  Kích thước bộ nhớ được cấp phát động sẽ được tính bằng **kích thước kiểu dữ liệu** nhân với **số lượng kí tự** sẽ được số **bytes cần sử dụng** 
+  Kích thước bộ nhớ được cấp phát động sẽ được tính bằng **kích thước kiểu dữ liệu** nhân với **số lượng kí tự** sẽ được số **bytes cần sử dụng**. 
+
+  Nếu cấp phát động thất bại thì sẽ trả về con trỏ kiểu **NULL** vì vậy trước khi bắt đầu chương trình ta phải kiểm tra xem có cấp phát thành công không.
+
+  `if (ten == NULL) return 0;` nếu không thành công sẽ thoát chương trình ngay.
+  
+  Ở chương trình trên ban đầu `int soluongkytu = 0;` điều đó có nghĩa là khi cấp phát ra thì `ten` có bộ nhớ 0 bytes và không có dữ liệu. `realloc()` giúp thay đổi kích thước của một biến tùy theo mong muốn sử dụng.
+
+  `ten = realloc(ten, sizeof(char) * soluongkytu);`
+
+  Sau khi đã cấp phát bộ nhớ thành công thì hiện tại bộ nhớ để chứa tên ấy sẽ **chỉ chứa các dữ liệu rác**, trong chương trình trên thì ta sử dụng `scanf()` để nhập dữ liệu vào `ten` được cấp phát động. Cuối cùng ta giải phóng bộ nhớ được cấp phát bằng `free()`
+
+  Chương trình sau khi chạy:
+  ```
+  Nhập số lượng ký tự trong tên: 
+  4
+  Nhập tên của bạn: 
+  Dung
+  Hello Dung
+  Nhập số lượng ký tự trong tên: 
+  3       
+  Nhập tên của bạn: 
+  Tai
+  Hello Tai
+  Nhập số lượng ký tự trong tên: 
+  5
+  Nhập tên của bạn: 
+  Nhung
+  Hello Nhung
+  ```
+
+  Như vậy với hai hàm `malloc()` và `realloc()` ta đã có thể truy cập vào các biến có kích thước dữ liệu khác nhau chỉ cần một vùng nhớ cấp phát động duy nhất.
+
+  Trong **stdlib.h** vẫn còn một hàm nữa là hàm `calloc()` ta có đặc điểm của hàm như sau:
+  
+  `void *calloc(size_t __nmemb, size_t __size)`
+
+  Trong đó:
+  + `__nmemb`: số phần tử tham gia
+  + `__size`: kích thước của mỗi phần tử
+
+  Giống `malloc()`, `calloc()` cũng cấp phát bộ nhớ và trả về con trỏ kiểu **void**. Khác với `malloc()`, bộ nhớ do `calloc()` cấp phát sẽ **được gán giá trị 0 ban đầu** thay vì là chứa các **giá trị rác**.
   </details>
   
 
