@@ -380,6 +380,363 @@ int main(int argc, char const *argv[])
 
 <details>
   <summary><strong> Circular Queue </strong></summary>
+<details>
+  <summary><strong> Đặc điểm của Circular Queue </strong></summary>
+  
+Do đặc điểm phải xóa hết hàng đợi mới được thêm dữ liệu vào khiến cho Linear Queue hoạt động rất chậm, không phù hợp cho việc ứng dụng vào các công việc cần truyền tin nhanh chóng mà không bị sót dữ liệu. Để khắc phục vấn đề này ta có **Circular Queue**.
+ 
+**Circular Queue** cũng có 'rear' và 'front' giống như Linear Queue. Trong **Circular Queue** khi rear đạt tới **size - 1** và không còn **chỗ trống từ phía cuối**, nếu **front đã di chuyển** (nghĩa là đã có các **phần tử được dequeue**), rear có thể **"quay vòng" về vị trí 0** để tận dụng khoảng trống.
 
+![image](https://github.com/user-attachments/assets/a7e22ec4-5bc3-41aa-835d-2ee74db8ae35)
+![image](https://github.com/user-attachments/assets/9a40f4c9-61aa-4d99-be5a-3d12e68db2f1)
+![image](https://github.com/user-attachments/assets/e91a7cf9-6f3e-45d4-8dc0-7196cde33509)
+![image](https://github.com/user-attachments/assets/d6c22727-5e04-4806-91ad-c41269605db1)
+
+Để biết được hàng chờ có đầy hay không ta dự vào công thức sau: `front == (rear + 1) % SIZE` => queue full
+
+![image](https://github.com/user-attachments/assets/dafdb8e4-ff41-46f3-9ac9-a12365798c53)
+![image](https://github.com/user-attachments/assets/f62a94f5-9a17-435c-94cd-5537ae854686)
+
+Để biết được hàng chờ có rỗng hay không ta dự vào **front** nếu **front = -1** thì hàng chờ rỗng
+
+![image](https://github.com/user-attachments/assets/44b9c5fd-18e0-4dd1-9a83-325225ca1b28)
+
+</details>  
+
+<details>
+  <summary><strong> Code mô phỏng </strong></summary>
+
+Để có thể mô phỏng cách hoạt động của **Circular Queue** ta sẽ phải thay đổi một vài chương trình kế thừa từ **Linear Queue**
+
++ Kiểm tra hàng đợi rỗng hay đầy dựa trên các điều kiện đã được kể trên `front == (rear + 1) % SIZE` => queue full và `front = -1` => queue empty
+  
+```c
+// kiểm tra hàng đợi đầy
+bool isFull(Queue queue)
+{
+    return (queue.front == (queue.rear + 1) % queue.size);
+}
+
+// kiểm tra hàng đợi rỗng
+bool isEmpty(Queue queue)
+{
+    return (queue.front == -1);
+}
+```
+
++ Hàm **enqueue** thêm phần tử thay đổi đoạn code thêm phần tử vào hàng đợi thành
+
+```c
+else queue->rear = (queue->rear + 1) % queue->size;
+```
+Để đảm bảo `rear` sẽ không vượt qua giới hạn `size` và sẽ qua trở lại 0 nếu bằng `size`
+
+```c
+void enqueue(Queue *queue, int data)
+{
+    if (isFull(*queue))
+    {
+        printf("Hàng đợi đầy!\n");
+        return;
+    }
+    else
+    {
+        if (queue->front == -1) queue->front = queue->rear = 0;
+        else queue->rear = (queue->rear + 1) % queue->size;
+        queue->item[queue->rear] = data;
+        printf("Enqueue data %d\n", data);
+    }
+}
+```
+
++ Tương tự với Hàm **dequeue** thay đổi để giữa `front` trong phạm vi từ 0 - 1
+```c
+#define QUEUE_EMPTY -1
+
+// xóa phần tử đầu hàng đợi
+int dequeue(Queue *queue)
+{
+    if (isEmpty(*queue))
+    {
+        printf("Hàng đợi rỗng!\n");
+        return QUEUE_EMPTY;
+    }
+    else
+    {
+        int dequeue_value = queue->item[queue->front];
+
+        queue->item[queue->front] = 0;
+
+        if (queue->front == queue->rear)
+        {
+            queue->front = queue->rear = -1;
+        }
+        else
+        {
+            queue->front = (queue->front + 1) % queue->size;
+        }
+        return dequeue_value;
+    }
+}
+```
+Khi mà giá trị của `rear` bằng `front`, điều đó có nghĩa là hàng đợi đã trỏ tới vị trí cuối cùng còn sót lại để xóa. Sau khi xóa xong giá trị thay vÌ tăng thêm `rear` thì reset `rear = front = -1` để hàng chờ rỗng luôn.
+
++ Hàm hiển thị theo thứ tự hàng đợi từ `front` đến `rear` cũng áp dụng code tương tự để giữ số đếm `i = front` tăng dần nhưng vẫn trong phạm vi từ 0 đến `size`. Nhờ vậy mà vòng lặp có thể in từ `front` cho đến dưới `rear` một ô và tiếp tục in giá trị tại `rear`
+
+```c
+// Hiển thị theo thứ tự từ front đến end
+void display(Queue queue)
+{
+    if (isEmpty(queue))
+    {
+        printf("Hàng đợi rỗng!\n");
+    }
+    else
+    {
+        printf("Queue order: ");
+
+        for (int i=queue.front; i!=queue.rear; i = (i + 1) % queue.size)
+        {
+            printf("%d ", queue.item[i]);
+        }
+        printf("%d\n", queue.item[queue.rear]);
+    }
+}
+```
++ Hàm hiển thị theo thứ tự địa chỉ ô nhớ, hàm này sẽ giúp in ra toàn bộ hàm chờ kể cả những ô không có dữ liệu (biểu thị bằng dấu *)
+
+```c
+// Hiển thị theo thứ tự bộ nhớ
+
+void display_ord(Queue queue)
+{
+    printf("Queue address order: ");
+    for (int i=0; i < queue.size; i++)
+    {   
+        if(queue.item[i] == 0) printf("* ");
+        else printf("%d ", queue.item[i]);
+    }
+    printf("\n");
+}
+```
+
+Ta có toàn bộ chương trình như sau:
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct
+{
+    int *item;  // mảng lưu trữ giá trị các phần tử
+    int size;   // số lượng phần tử tối đa có thể đưa vào
+    int front;  // chỉ số của phần tử đầu hàng đợi
+    int rear;   // chỉ số của phần tử cuối hàng đợi
+} Queue;
+
+// khởi tạo hàng đợi
+void initialize(Queue *queue, int size)
+{
+    queue->size  = size;
+    queue->item  = (int*)malloc(size * sizeof(int));
+    queue->front = queue->rear = -1;
+}
+
+void free_queue(Queue *queue)
+{
+    free(queue->item);
+}
+// kiểm tra hàng đợi đầy
+bool isFull(Queue queue)
+{
+    return (queue.front == (queue.rear + 1) % queue.size);
+}
+
+// kiểm tra hàng đợi rỗng
+bool isEmpty(Queue queue)
+{
+    return (queue.front == -1);
+}
+
+// thêm phần tử vào cuối hàng đợi
+void enqueue(Queue *queue, int data)
+{
+    if (isFull(*queue))
+    {
+        printf("Hàng đợi đầy!\n");
+        return;
+    }
+    else
+    {
+        if (queue->front == -1) queue->front = queue->rear = 0;
+        else queue->rear = (queue->rear + 1) % queue->size;
+        queue->item[queue->rear] = data;
+        printf("Enqueue data %d\n", data);
+    }
+}
+
+#define QUEUE_EMPTY -1
+
+// xóa phần tử đầu hàng đợi
+int dequeue(Queue *queue)
+{
+    if (isEmpty(*queue))
+    {
+        printf("Hàng đợi rỗng!\n");
+        return QUEUE_EMPTY;
+    }
+    else
+    {
+        int dequeue_value = queue->item[queue->front];
+
+        queue->item[queue->front] = 0;
+
+        if (queue->front == queue->rear)
+        {
+            queue->front = queue->rear = -1;
+        }
+        else
+        {
+            queue->front = (queue->front + 1) % queue->size;
+        }
+        return dequeue_value;
+    }
+}
+
+// Hiển thị theo thứ tự từ front đến end
+void display(Queue queue)
+{
+    if (isEmpty(queue))
+    {
+        printf("Hàng đợi rỗng!\n");
+    }
+    else
+    {
+        printf("Queue order: ");
+
+        for (int i=queue.front; i!=queue.rear; i = (i + 1) % queue.size)
+        {
+            printf("%d ", queue.item[i]);
+        }
+        printf("%d\n", queue.item[queue.rear]);
+    }
+}
+
+// Hiển thị theo thứ tự bộ nhớ
+
+void display_ord(Queue queue)
+{
+    printf("Queue address order: ");
+    for (int i=0; i < queue.size; i++)
+    {   
+        if(queue.item[i] == 0) printf("* ");
+        else printf("%d ", queue.item[i]);
+    }
+    printf("\n");
+}
+
+int front(Queue queue)
+{
+    if (isEmpty(queue))
+    {
+        printf("Hàng đợi rỗng!\n");
+        return QUEUE_EMPTY;
+    }
+    else
+    {
+        return queue.item[queue.front];
+    }
+}
+
+int rear(Queue queue)
+{
+    if (isEmpty(queue))
+    {
+        printf("Hàng đợi rỗng!\n");
+        return QUEUE_EMPTY;
+    }
+    else
+    {
+        return queue.item[queue.rear];
+    }
+}
+
+int main(int argc, char const *argv[])
+{
+    Queue ciQueue;
+
+    initialize(&ciQueue, 5);
+
+    enqueue(&ciQueue, 1);
+    enqueue(&ciQueue, 2);
+    enqueue(&ciQueue, 3);
+    enqueue(&ciQueue, 4);
+    enqueue(&ciQueue, 5);
+    enqueue(&ciQueue, 6);
+
+    printf("Front: %d\n", front(ciQueue));
+    printf("Rear: %d\n", rear(ciQueue));
+
+    display(ciQueue);
+
+    printf("Dequeue %d\n", dequeue(&ciQueue));
+    printf("Dequeue %d\n", dequeue(&ciQueue));
+    display_ord(ciQueue);
+    enqueue(&ciQueue, 10);
+    enqueue(&ciQueue, 20);
+    printf("Dequeue %d\n", dequeue(&ciQueue));
+    printf("Dequeue %d\n", dequeue(&ciQueue));
+    printf("Dequeue %d\n", dequeue(&ciQueue));
+
+    display(ciQueue);
+    display_ord(ciQueue);
+
+    enqueue(&ciQueue, 10);
+    enqueue(&ciQueue, 30);
+
+    display(ciQueue);
+    display_ord(ciQueue);
+
+    free_queue(&ciQueue);
+    return 0;
+}
+```
+
+Sau khi chạy sẽ được kết quả là:
+```c
+Enqueue data 1
+Enqueue data 2
+Enqueue data 3
+Enqueue data 4
+Enqueue data 5
+Hàng đợi đầy!
+Front: 1
+Rear: 5
+Queue order: 1 2 3 4 5
+Dequeue 1
+Dequeue 2
+Queue address order: * * 3 4 5 
+Enqueue data 10
+Enqueue data 20
+Dequeue 3
+Dequeue 4
+Dequeue 5
+Queue order: 10 20
+Queue address order: 10 20 * * * 
+Enqueue data 10
+Enqueue data 30
+Queue order: 10 20 10 30
+Queue address order: 10 20 10 30 *
+```
+Giải thích kết quả thu được:
++ Thêm liên tục 5 dữ liệu, khi cố thêm dữ liệu thứ 6 bị báo đầy
++ Xóa hai dữ liệu đầu tiên, khi hiển thị ra màn hình sẽ thấy hàng chờ bị trống hai chỗ đầu
++ Thêm 2 dữ liệu mới và lần lượt xóa hết dữ liệu cũ, dữ liệu mới vẫn được thêm vào dù dữ liệu cũ trước đó chưa được xóa hết.
++ Khi hiển thị lên màn hình thì 2 dữ liệu mới ở hai ô nhớ đầu tiên, điều đó có nghĩa là `rear` đã vòng lại 0
++ Tiếp tục thêm 2 dữ liệu mới vào hàng chờ và chỉ còn một ô nhớ trống
+Chương trình đã đáp ứng yêu cầu mô phỏng
+</details>  
 </details>
+
+
 </details>
