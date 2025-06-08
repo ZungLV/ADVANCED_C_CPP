@@ -72,6 +72,10 @@ Cấu trúc `JsonValue` sử dụng **struct** kết hợp với **union** để
 </details>
 
 
+
+
+
+
 <details>
 <summary><strong> Hàm bỏ qua khoảng trắng </strong></summary>
 
@@ -92,12 +96,90 @@ Hàm `skip_whitespace` dùng để bỏ qua các ký tự **khoảng trắng (wh
 </details>
 
 
+  
+
+
+
+<details>
+<summary><strong> Hàm phân tích NULL </strong></summary>
+
+```c
+JsonValue *parse_null(const char **json) {
+    skip_whitespace(json);
+    if (strncmp(*json, "null", 4) == 0) {
+        JsonValue *value = (JsonValue *) malloc(sizeof(JsonValue));
+        value->type = JSON_NULL;
+        *json += 4;
+        return value;
+    }
+    return NULL;
+}
+```
+
+Hàm `parse_null` dùng để phân tích và xử lý giá trị null trong chuỗi JSON.
+
+1.  `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa.
+2.  `strncmp(*json, "null", 4) == 0`: So sánh 4 ký tự đầu tiên của chuỗi hiện tại với chuỗi "null". Nếu khớp, tức là gặp giá trị null trong JSON.
++  Khi đó khởi tạo đối tượng `JsonValue`, cấp phát bộ nhớ cho một `JsonValue` mới
++  Gán kiểu dữ liệu là `JSON_NULL`.
++  Sau đó di chuyển con trỏ chuỗi `*json` tiến 4 ký tự (bỏ qua chữ `"null"`).
++  Trả về đối tượng `JsonValue` đã khởi tạo.
+3.  Nếu không khớp `"null"`, hàm trả về **NULL**, tức là không phải giá trị `null` hợp lệ tại vị trí đó.
+
+</details>
+
+
+
+<details>
+<summary><strong> Hàm phân tích boolean </strong></summary>
+
+```c
+JsonValue *parse_boolean(const char **json) {
+    skip_whitespace(json);
+    JsonValue *value = (JsonValue *) malloc(sizeof(JsonValue));
+    if (strncmp(*json, "true", 4) == 0) {
+        value->type = JSON_BOOLEAN;
+        value->value.boolean = true;
+        *json += 4;
+    } else if (strncmp(*json, "false", 5) == 0) {
+        value->type = JSON_BOOLEAN;
+        value->value.boolean = false;
+        *json += 5;
+    } else {
+        free(value);
+        return NULL;
+    }
+    return value;
+}
+```
+
+Hàm `parse_boolean` dùng để phân tích và xử lý giá trị `boolean` (`true` hoặc `false`) trong chuỗi JSON.
+
+1.  `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa.
+2.   Cấp phát bộ nhớ cho `JsonValue` mới để lưu trữ giá trị boolean.
+3.  So sánh với `"true"`, nếu chuỗi bắt đầu bằng `"true"`, gán type là `JSON_BOOLEAN` và `value.boolean = true`. Dịch con trỏ `*json` thêm 4 ký tự để vượt qua `"true"`.
+4.  So sánh với `"false"`, nếu chuỗi bắt đầu bằng `"false"`, gán type là `JSON_BOOLEAN` và `value.boolean = false`. Dịch con trỏ JSON thêm 5 ký tự để vượt qua "false".
+5.  Nếu không phải `"true"` hay `"false"` thì giải phóng bộ nhớ đã cấp phát và trả về `NULL` để báo lỗi phân tích cú pháp.
+6.  Trả về con trỏ `JsonValue` đã được phân tích thành công.
+
+</details>
+
+
 
 <details>
 <summary><strong> 000 </strong></summary>
 
 
 </details>
+
+
+
+<details>
+<summary><strong> 000 </strong></summary>
+
+
+</details>
+
 
 
 
