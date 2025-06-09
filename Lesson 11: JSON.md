@@ -188,11 +188,60 @@ JsonValue *parse_number(const char **json) {
 ```
 
 Hàm `parse_number` dùng để **phân tích và xử lý số** trong chuỗi JSON, bao gồm số nguyên, số thực, và số mũ
-1.  `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa.
-2.  `strtod` chuyển đổi chuỗi thành số thực (`double`) và lưu địa chỉ ký tự kế tiếp không phải là phần của số vào `end`.
-3.  `end != *json`
+1.  `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa
+2.  `strtod` chuyển đổi chuỗi thành số thực (`double`) và lưu địa chỉ ký tự kế tiếp không phải là phần của số vào `end`
+3.  `if (end != *json)`: Kiểm tra xem có số nào được phân tích không. Nếu `end == *json` có nghĩa là **không có ký tự nào trong chuỗi đầu vào** được `strtod` **chuyển đổi thành số thực hợp lệ**, khi đấy trả về `NULL`. Trong trường hợp đã chuyển đổi thành số thành công
++  Cấp phát động biến `value` để chứa thông tin dữ liệu được phân tích
++  Phân dữ liệu thành `JSON_NUMBER`
++  Lưu lại số thực đã được phân tích vào `value->value.number`
++  `*json = end` đưa con trỏ `json` về vị chỉ ngay sau số hợp lệ trong chuỗi, sẵn sàng cho việc phân tích sau này
++  Trả về `value` lưa trữ toàn bộ thông tin và giá trị được phân tích
+ 
+</details>
+
+
+
+<details>
+<summary><strong> Hàm phân tích chuỗi </strong></summary>
+
+```c
+JsonValue *parse_string(const char **json) {
+    skip_whitespace(json);
+
+
+    if (**json == '\"') {
+        (*json)++;
+        const char *start = *json;
+        while (**json != '\"' && **json != '\0') {
+            (*json)++;
+        }
+        if (**json == '\"') {
+            size_t length = *json - start; // 3
+            char *str = (char *) malloc((length + 1) * sizeof(char));
+            strncpy(str, start, length);
+            str[length] = '\0';
+
+
+            JsonValue *value = (JsonValue *) malloc(sizeof(JsonValue));
+            value->type = JSON_STRING;
+            value->value.string = str;
+            (*json)++;
+            return value;
+        }
+    }
+    return NULL;
+}
+```
+
+Hàm `parse_string` dùng để **phân tích chuỗi JSON** (kiểu "string")
+1.  `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa
+2.  
+
+
 
 </details>
+
+
 
 
 
@@ -201,7 +250,6 @@ Hàm `parse_number` dùng để **phân tích và xử lý số** trong chuỗi 
 
 
 </details>
-
 
 
 
