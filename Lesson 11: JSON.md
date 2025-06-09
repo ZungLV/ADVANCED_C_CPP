@@ -235,7 +235,15 @@ JsonValue *parse_string(const char **json) {
 
 Hàm `parse_string` dùng để **phân tích chuỗi JSON** (kiểu "string")
 1.  `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa
-2.  
+2.  `if (**json == '\"')`: Kiểm tra chuỗi có bắt đầu bằng dấu `"` hay không, nếu không thì trả về `NULL`, nếu có thì thực hiện các bước tiếp theo
+3.  `const char *start = *json`: Ghi nhớ vị trí bắt đầu của chuỗi
+4.  Thực hiện vòng lặp để lấy toàn bộ chuỗi có nghĩa và chỉ dừng khi trỏ đến dấu `"` hay đến cuối chuỗi `\0`
+5.  Nếu như đã đến cuối chuỗi hợp lệ `if (**json == '\"')`
++  Tính độ dài chuỗi hợp lệ
++  Cấp phát bộ nhớ cho chuỗi đã được phân tích
++  Copy nội dung trong chuỗi hợp lệ vào bộ nhớ mới được tạo và viết kết thúc chuỗi `\0` vào cuối chuỗi
++  Cấp phát cho kiểu `JsonValue`, gán chuỗi đã được phân tích và kiểu dữ liệu
++  Cập nhập con trỏ để bỏ qua dấu `"` kết thúc và trả về biến giá trị và kiểu đã tạo
 
 
 
@@ -248,8 +256,75 @@ Hàm `parse_string` dùng để **phân tích chuỗi JSON** (kiểu "string")
 <details>
 <summary><strong> 000 </strong></summary>
 
+```c
+JsonValue *parse_array(const char **json) {
+    skip_whitespace(json);
+    if (**json == '[') {
+        (*json)++;
+        skip_whitespace(json);
+
+        JsonValue *array_value = (JsonValue *)malloc(sizeof(JsonValue));
+        array_value->type = JSON_ARRAY;
+        array_value->value.array.count = 0;
+        array_value->value.array.values = NULL;
+
+        /*
+        double arr[2] = {};
+        arr[0] = 30;
+        arr[1] = 70;
+        */
+
+        while (**json != ']' && **json != '\0') {
+            JsonValue *element = parse_json(json); // 70
+            if (element) {
+                array_value->value.array.count++;
+                array_value->value.array.values = (JsonValue *)realloc(array_value->value.array.values, array_value->value.array.count * sizeof(JsonValue));
+                array_value->value.array.values[array_value->value.array.count - 1] = *element;
+                free(element);
+            } else {
+                break;
+            }
+            skip_whitespace(json);
+            if (**json == ',') {
+                (*json)++;
+            }
+        }
+        if (**json == ']') {
+            (*json)++;
+            return array_value;
+        } else {
+            free_json_value(array_value);
+            return NULL;
+        }
+    }
+    return NULL;
+}
+```
+
 
 </details>
+
+
+
+
+
+
+<details>
+<summary><strong> 000 </strong></summary>
+
+</details>
+
+
+
+
+
+<details>
+<summary><strong> 000 </strong></summary>
+
+</details>
+
+
+
 
 
 
