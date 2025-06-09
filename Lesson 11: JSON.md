@@ -167,7 +167,28 @@ Hàm `parse_boolean` dùng để phân tích và xử lý giá trị `boolean` (
 
 
 <details>
-<summary><strong> 000 </strong></summary>
+<summary><strong> Hàm phân tích số liệu </strong></summary>
+
+```c
+JsonValue *parse_number(const char **json) {
+    skip_whitespace(json);
+    char *end;
+
+
+    double num = strtod(*json, &end);
+    if (end != *json) {
+        JsonValue *value = (JsonValue *) malloc(sizeof(JsonValue));
+        value->type = JSON_NUMBER;
+        value->value.number = num;
+        *json = end;
+        return value;
+    }
+    return NULL;
+}
+```
+
+Hàm `parse_number` dùng để **phân tích và xử lý số** trong chuỗi JSON, bao gồm số nguyên, số thực, và số mũ
+1.
 
 
 </details>
