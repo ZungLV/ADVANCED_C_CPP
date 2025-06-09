@@ -188,7 +188,8 @@ JsonValue *parse_number(const char **json) {
 ```
 
 Hàm `parse_number` dùng để **phân tích và xử lý số** trong chuỗi JSON, bao gồm số nguyên, số thực, và số mũ
-1.
+1.  `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa.
+2.  `strtod` chuyển đổi chuỗi thành số thực (`double`) và lưu địa chỉ ký tự kế tiếp không phải là phần của số vào `end`.
 
 
 </details>
