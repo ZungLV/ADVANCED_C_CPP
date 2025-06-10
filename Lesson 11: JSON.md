@@ -431,10 +431,88 @@ Cấp phát động lại cho value rồi gán giá trị phân tích được v
 
 
 <details>
-<summary><strong> 000 </strong></summary>
+<summary><strong> Hàm phân tích JSON chung </strong></summary>
+
+```c
+JsonValue *parse_json(const char **json) { 
+    while (isspace(**json)) {
+        (*json)++;
+    }
+
+
+
+    switch (**json) {
+        case 'n':
+            return parse_null(json);
+        case 't':
+        case 'f':
+            return parse_boolean(json);
+        case '\"':
+            return parse_string(json);
+        case '[':
+            return parse_array(json);
+        case '{':
+            return parse_object(json);
+        default:
+            if (isdigit(**json) || **json == '-') {
+                return parse_number(json);
+            } else {
+                // Lỗi phân tích cú pháp
+                return NULL;
+            }
+    }
+}
+```
+
+Hàm này sẽ thực hiện các hàm phân tích ở trên mỗi khi phát hiện một ký hiệu mở đầu tương ứng
 
 </details>
 
+
+
+<details>
+<summary><strong> Hàm giải phóng bộ nhớ JSON </strong></summary>
+
+```c
+void free_json_value(JsonValue *json_value) {
+    if (json_value == NULL) {
+        return;
+    }
+
+    switch (json_value->type) {
+        case JSON_STRING:
+            free(json_value->value.string);
+            break;
+
+        case JSON_ARRAY:
+            for (size_t i = 0; i < json_value->value.array.count; i++) {
+                free_json_value(&json_value->value.array.values[i]);
+            }
+            free(json_value->value.array.values);
+            break;
+
+        case JSON_OBJECT:
+            for (size_t i = 0; i < json_value->value.object.count; i++) {
+                free(json_value->value.object.keys[i]);
+                free_json_value(&json_value->value.object.values[i]);
+            }
+            free(json_value->value.object.keys);
+            free(json_value->value.object.values);
+            break;
+
+        default:
+            break;
+    }
+}
+```
+
+Hàm `free_json_value` dùng để **giải phóng bộ nhớ JSON**
++  Đối với các kiểu `string` thì sẽ giải phóng bộ nhớ lưu chuỗi được cấp phát
++  Đối với kiểu `JSON_STRING` và kiểu `JSON_ARRAY` sẽ được đệ quy để xóa lần lượt từng cặp key-value hoặc từng phần tử trong mảng được cấp phát
++  Đối với các kiểu có kích thước xác định sẵn như `JSON_BOOLEAN`, `JSON_NUMBER` hay kiểu dữ liệu `JsonType` sẽ không cần giải phóng bộ nhớ
+
+
+</details>
 
 
 
