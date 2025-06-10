@@ -63,7 +63,7 @@ Cấu trúc `JsonValue` sử dụng **struct** kết hợp với **union** để
 
 Đối với **kiểu đối tượng** (`JSON_OBJECT`), dữ liệu được lưu dưới dạng các cặp key–value:
 
- +   `keys` là mảng các chuỗi ký tự (`char **`), luôn là kiểu chuỗi (string),
+ +   `keys` là **mảng các chuỗi ký tự** (`char **`), luôn là kiểu chuỗi (string),
 
  +   `values` là mảng các `JsonValue`, cho phép lưu trữ các kiểu dữ liệu khác nhau cho từng key,
 
@@ -254,7 +254,7 @@ Hàm `parse_string` dùng để **phân tích chuỗi JSON** (kiểu "string")
 
 
 <details>
-<summary><strong> 000 </strong></summary>
+<summary><strong> Hàm phân tích mảng </strong></summary>
 
 ```c
 JsonValue *parse_array(const char **json) {
@@ -301,6 +301,27 @@ JsonValue *parse_array(const char **json) {
 }
 ```
 
+Hàm `parse_array` dùng để **phân tích một mảng JSON**
+1. `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa
+2.  `if (**json == '[')`: Kiểm tra nếu bắt đầu bằng dấu `[` — tức là một mảng JSON, nếu không trả NULL. Nếu phát hiện bắt đầu mảng, dịch con trỏ khỏi `[` rồi sài hàm `skip_whitespace(json)`
+3.  Cấp phát động cho mảng, gán kiểu dữ liệu `JSON_ARRAY`, do mảng trống nên `array_value->value.array.count = 0;` và `array_value->value.array.values = NULL;`
+4.  Lặp qua từng phần tử trong mảng. Gọi đệ quy parse_json(json) để phân tích từng phần tử (có thể là số, chuỗi, object, mảng, v.v.).
+5.
+```
+array_value->value.array.count++;
+array_value->value.array.values = realloc(...);
+```
+Tăng số lượng phần tử trong mảng. Dùng `realloc` để mở rộng mảng giá trị (`values`).
+
+6.  
+```
+array_value->value.array.values[count - 1] = *element;
+free(element);
+```
+Sao chép nội dung `JsonValue` từ con trỏ tạm `element`. Sau đó giải phóng con trỏ `element`.
+
+7.  Kết thúc mảng kiểm tra xem có dấu `]` kết thúc mảng không, nếu có trả về mảng được phân tích, nếu không giải phóng bộ nhớ vừa được cấp phát `array_value`
+
 
 </details>
 
@@ -310,8 +331,99 @@ JsonValue *parse_array(const char **json) {
 
 
 <details>
-<summary><strong> 000 </strong></summary>
+<summary><strong> Hàm phân tích đối tượng </strong></summary>
 
+```c
+JsonValue *parse_object(const char **json) {
+    skip_whitespace(json);
+    if (**json == '{') {
+        (*json)++;
+        skip_whitespace(json);
+
+        JsonValue *object_value = (JsonValue *)malloc(sizeof(JsonValue));
+        object_value->type = JSON_OBJECT;
+        object_value->value.object.count = 0;
+        object_value->value.object.keys = NULL;
+        object_value->value.object.values = NULL;
+
+
+
+        while (**json != '}' && **json != '\0') {
+            JsonValue *key = parse_string(json);
+            if (key) {
+                skip_whitespace(json);
+                if (**json == ':') {
+                    (*json)++;
+                    JsonValue *value = parse_json(json);
+                    if (value) {
+                        object_value->value.object.count++;
+                        object_value->value.object.keys = (char **)realloc(object_value->value.object.keys, object_value->value.object.count * sizeof(char *));
+                        object_value->value.object.keys[object_value->value.object.count - 1] = key->value.string;
+
+                        object_value->value.object.values = (JsonValue *)realloc(object_value->value.object.values, object_value->value.object.count * sizeof(JsonValue));
+                        object_value->value.object.values[object_value->value.object.count - 1] = *value;
+                        free(value);
+                    } else {
+                        free_json_value(key);
+                        break;
+                    }
+                } else {
+                    free_json_value(key);
+                    break;
+                }
+            } else {
+                break;
+            }
+            skip_whitespace(json);
+            if (**json == ',') {
+                (*json)++;
+            }
+        }
+        if (**json == '}') {
+            (*json)++;
+            return object_value;
+        } else {
+            free_json_value(object_value);
+            return NULL;
+        }
+    }
+    return NULL;
+}
+```
+
+Hàm `parse_object` dùng để **phân tích một đối tượng JSON**
+1. `skip_whitespace(json)`: Gọi hàm phụ để bỏ qua các ký tự khoảng trắng ở đầu chuỗi, đảm bảo con trỏ trỏ đúng vào phần dữ liệu có ý nghĩa
+2.  `if (**json == '{')`: Kiểm tra nếu bắt đầu bằng dấu `{` — tức là một đối tượng JSON, nếu không trả NULL. Nếu phát hiện bắt đầu đối tượng, dịch con trỏ khỏi `{` rồi sài hàm `skip_whitespace(json)`
+3.   Tạo đối tượng JSON kiểu `JSON_OBJECT`, và khởi tạo rỗng.
+```
+JsonValue *object_value = (JsonValue *)malloc(sizeof(JsonValue));
+object_value->type = JSON_OBJECT;
+object_value->value.object.count = 0;
+object_value->value.object.keys = NULL;
+object_value->value.object.values = NULL;
+```
+4.  Vòng lặp xử lý từng cặp key-value, chỉ thoát vòng lặp khi gặp `}` hay `\0` kết thúc chuỗi
++  `JsonValue *key = parse_string(json)`: JSON object chỉ chấp nhận key là chuỗi, nên sử dụng `parse_string`
++  `JsonValue *value = parse_json(json)`: value (ứng với key và ngăn cách với key bởi dấu `:`) có thể là bất kỳ kiểu nào (số, chuỗi, object, array,...), nên sử dụng `parse_json` để phân tích chung
+5.  
+```
+object_value->value.object.count++;
+object_value->value.object.keys = (char **)realloc(object_value->value.object.keys, object_value->value.object.count * sizeof(char *));
+object_value->value.object.keys[object_value->value.object.count - 1] = key->value.string;
+```
+Tăng các cặp key-value thêm 1 (`object_value->value.object.count++`). Cấp phát động lại cho key rồi gán chuỗi phân tích được vào vị trí key tương ứng
+
+6.
+```
+object_value->value.object.values = (JsonValue *)realloc(object_value->value.object.values, object_value->value.object.count * sizeof(JsonValue));
+object_value->value.object.values[count - 1] = *value;
+free(value);
+```
+Cấp phát động lại cho value rồi gán giá trị phân tích được vào vị trí value tương ứng rồi giải phóng biến `value` tạm
+
+7. Trong trường hợp nếu có lỗi sảy ra như key không hợp lệ hay không có dấu kết thúc đối tượng `}` thì tùy trường hợp sẽ giải phóng key và toàn bộ đối tượng được cấp phát
+
+ 
 </details>
 
 
