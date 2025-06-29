@@ -207,7 +207,7 @@ Constructor được dùng để gán giá trị các thuộc tính và bản th
 Khi chạy chương trình:
 
 ```
-hieu dai: 10
+Chieu dai: 10
 Chieu rong: 5
 Dien tich: 50
 ```
