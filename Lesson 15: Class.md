@@ -191,7 +191,7 @@ int main()
 }
 ```
 
-Ta con constructor được viết như sau
+Ta có constructor được viết như sau
 
 ```cpp
         HinhChuNhat(int _chieuDai = 10, int _chieuRong = 5)
@@ -256,6 +256,269 @@ Dien tich: 16
 ```
 
 </details>
+
+
+
+<details>
+  <summary><strong> Destructor </strong></summary>
+  
+Destructor trong C++ là một phương thức đặc biệt của lớp, được **tự động gọi khi đối tượng bị hủy** – tức là khi nó thoát khỏi phạm vi hoạt động  hoặc được giải phóng.
+
+Đặc điểm của destructor:
+
++  Có tên trùng với tên lớp, nhưng có thêm dấu ~ ở đầu.
+
++  Không có tham số và không có kiểu trả về.
+
++  Mỗi lớp chỉ có duy nhất một destructor, không thể nạp chồng.
+
++  Thường được sử dụng để xóa tất cả dữ liệu
+
++  Tự động gọi trước khi đối tượng được thu hồi.
+
+Ta có chương trình sau:
+
+```c
+#include <iostream>
+using namespace std;
+
+class HinhChuNhat
+{
+    public:
+        double chieuDai;
+        double chieuRong;
+
+        HinhChuNhat()
+        {
+            cout << "Constructor " << '\n';      
+            chieuDai = 10;
+            chieuRong = 9;
+            display();
+        }
+
+        ~HinhChuNhat()
+        {
+            cout << "#####################" << '\n';
+            cout << "Destructor " << '\n';
+            chieuDai = 0;
+            chieuRong = 0;
+            display();
+        }
+
+        // Hàm tính diện tích
+        double tinhDienTich()
+        {
+            return chieuDai * chieuRong;
+        }
+
+        void display()
+        {   
+            cout << "Chieu dai: " << chieuDai << '\n';
+            cout << "Chieu rong: " << chieuRong << '\n';
+            cout << "Dien tich: " << tinhDienTich() << '\n';
+        }
+};
+
+int main()
+{
+    HinhChuNhat hinh1;
+    return 0;
+}
+```
+
+Chạy chương trình ta được:
+
+```
+Constructor 
+Chieu dai: 10
+Chieu rong: 9
+Dien tich: 90
+#####################
+Destructor 
+Chieu dai: 0
+Chieu rong: 0
+Dien tich: 0
+```
+
+Có thể thấy ban đầu constructor sẽ được gọi đầu tiên để khởi tạo các thuộc tính trong `class`. Khi kết thúc hàm `main` đồng nghĩa với kết thúc hoạt động `class` thì destructor sẽ được gọi để xóa hết các thuộc tính.
+</details>
+
+
+
+<details>
+  <summary><strong> Static </strong></summary>
+
+
+<details>
+  <summary><strong> Static property </strong></summary>
+  
+Khi một thuộc tính (property) trong lớp được khai báo với từ khóa `static`, thì thuộc tính đó không thuộc về bất kỳ đối tượng cụ thể nào, mà **thuộc về chính lớp đó**. Điều này có nghĩa là tất cả các đối tượng của lớp sẽ **dùng chung một bản sao duy nhất** của thuộc tính này – tức là **dùng chung địa chỉ** trong bộ nhớ.
+
+Đặc điểm của static property:
+
++  Được chia sẻ bởi tất cả các object của lớp.
+
++  Có thể được truy cập mà không cần tạo đối tượng, thông qua cú pháp ClassName::property.
+
++  Thường được dùng cho các biến đếm số lượng đối tượng, giá trị cấu hình chung, hoặc các hằng số dùng chung.
+
++  Bắt buộc phải khởi tạo toàn cục.
+
+Ví dụ ta có một chương trình như sau:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class HinhChuNhat
+{
+    public:
+        double chieuDai;
+        double chieuRong;
+        static int var;
+};
+   
+int HinhChuNhat::var;
+
+int main()
+{
+    HinhChuNhat hinh1;
+    HinhChuNhat hinh2;
+    HinhChuNhat hinh3;
+
+    cout << "address of chieu dai: " << &hinh1.chieuDai << '\n';
+    cout << "address of chieu dai: " << &hinh2.chieuDai << '\n';
+    cout << "address of chieu dai: " << &hinh3.chieuDai << '\n';
+
+    cout << "address of var: " << &hinh1.var << '\n';
+    cout << "address of var: " << &hinh2.var << '\n';
+    cout << "address of var: " << &hinh3.var << '\n';
+    return 0;
+}
+```
+
+Ta có ba thuộc tính `chieuDai`, `chieuRong`, `var` trong đó thuộc tính `var` là static property. Ta muốn thử kiểm tra địa chỉ của thuộc tính thường và static property, khi chạy chương trình ta được.
+
+```cpp
+address of chieu dai: 0x4c9a7ffca0
+address of chieu dai: 0x4c9a7ffc90
+address of chieu dai: 0x4c9a7ffc80
+address of var: 0x7ff78f877030
+address of var: 0x7ff78f877030
+address of var: 0x7ff78f877030
+```
+
+Vậy mặc dù được gọi ở ba đối tượng khác nhau nhưng thuộc tính `var` vẫn chỉ có một địa chỉ.
+
+</details>
+
+
+<details>
+  <summary><strong> Static method </strong></summary>
+  
+Khi một phương thức (method) trong lớp được khai báo với từ khóa `static`, phương thức đó có các đặc điểm sau:
+
+Đặc điểm của static method:
+
++  Độc lập với đối tượng (object): static method không hoạt động trên một đối tượng cụ thể, tức là không có con trỏ this. Vì vậy, không thể truy cập trực tiếp các thuộc tính hay phương thức không-static trong class từ một static method.
++  Không cần tạo object để gọi: có thể gọi static method ngay cả khi chưa có bất kỳ đối tượng nào của lớp được tạo ra.
++  Truy cập thông qua tên lớp và toán tử ::  `ClassName::methodName();`
++  Chỉ có thể truy cập các thành phần static khác: static method có thể gọi các static method khác hoặc truy cập các static property bên trong cùng lớp hoặc từ lớp khác.
+
+Ta có chương trình minh họa:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class HinhChuNhat
+{
+    public:
+        double chieuDai;
+        double chieuRong;
+        static int var;
+        static void display()
+        {
+            cout << "Day la static method va ta co var: " << var << '\n';
+        }
+};
+   
+int HinhChuNhat::var = 100;
+
+int main()
+{
+    HinhChuNhat::display();
+    return 0;
+}
+```
+
+Như vậy mặc dù không khởi tạo bất kì đối tượng nào ta vẫn có thể gọi trực tiếp static method (phương thức `display`) mà phương thức này chỉ có thể truy cập duy nhất một thuộc tính `var` (static property).
+
+```
+Day la static method va ta co var: 100
+```
+
+</details>
+
+
+</details>
+
+
+
+
+
+<details>
+  <summary><strong> Khai báo Class trong file header </strong></summary>
+
+Đối với file header chúng ta khai báo như bình thường trong C, các phương thức trong `class` chúng ta chỉ khai báo tên chứ không viết chi tiết ra
+
+```cpp
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class SinhVien
+{
+    public:
+        int ID;         // property
+        string name;    // property
+        string lop;     // property
+        void display(); // method
+};
+```
+
+Đối với file source thì chúng ta sẽ khai báo chi tiết các hàm trong `class` bằng cú pháp 
+
+`kiểu_trả_về  tên_class :: tên_hàm`
+
+```cpp
+#include <iostream>
+#include <string>
+#include “main.hpp”
+
+using namespace std;
+
+void SinhVien::display()
+{
+    cout << "MSSV: " << ID << endl;
+    cout << "TEN: " << name << endl;
+    cout << "LOP: " << lop << endl;
+}
+
+int main(int argc, char const *argv[])
+{
+    SinhVien sv; // sv được gọi là object
+    sv.ID = 2010117;
+    sv.name = "Anh";
+    sv.lop = "DD20TD1";
+    sv.display();  
+    return 0;
+}
+```
+
+</details>
+
 
 
 
