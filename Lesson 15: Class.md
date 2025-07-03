@@ -137,6 +137,64 @@ Dien tich: 50
 
 <details>
   <summary><strong> Phạm vi truy cập - protected </strong></summary>
+  
+`protected` là một mức độ truy cập trung gian giữa private và public:
+
++  Giống như private: Các thành viên protected không thể truy cập từ bên ngoài class (tức là không thể truy cập qua đối tượng).
+
++  Giống như public: Các thành viên protected có thể được truy cập từ các lớp dẫn xuất (lớp con).
+
+`protected` thường được dùng khi không muốn người dùng bên ngoài lớp truy cập trực tiếp, nhưng muốn cho phép các lớp con kế thừa sử dụng hoặc sửa đổi thuộc tính hoặc phương thức đó.
+
+Chương trình mẫu:
+
+```c
+#include <iostream>
+using namespace std;
+
+class HinhChuNhat
+{
+    protected:
+        double chieuDai = 5;
+        double chieuRong = 10;
+   
+    public:
+        // Hàm tính diện tích
+        double tinhDienTich()
+        {
+            return chieuDai * chieuRong;
+        }
+};
+
+
+class Display : public HinhChuNhat
+{
+    public:
+        void display()
+        {
+            cout << "Chieu dai: " << chieuDai << "\n";
+            cout << "Chieu rong: " << chieuRong <<"\n";
+        }
+
+};
+
+
+int main()
+{
+    Display hinh1;
+    hinh1.display();
+    //cout << "Chieu dai: " << hinh1.chieuDai << "\n";      //  Không thể chạy do đây là protected
+    //cout << "Chieu rong: " << hinh1.chieuRong <<"\n";     //  Không thể chạy do đây là protected
+    return 0;
+}
+```
+
+Kết quả đạt được
+
+```
+Chieu dai: 5
+Chieu rong: 10
+```
 
 </details>
 
