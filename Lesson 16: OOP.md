@@ -304,7 +304,161 @@ int main() {
 <details>
   <summary><strong> Kế thừa private </strong></summary>
 
+Khi một lớp kế thừa lớp cha bằng từ khóa `private`, thì:
 
++  `public` → `private`: Không thể truy cập từ bên ngoài lớp con nữa. Chỉ lớp con có thể dùng nội bộ.
+
++  `protected` → `private`: Cũng không thể truy cập từ bên ngoài, và lớp kế tiếp nữa (nếu có) cũng không thấy được.
+
++  `private` của lớp cha: Không được kế thừa trực tiếp. Nhưng có thể truy cập gián tiếp qua các method public hoặc protected của lớp cha.
+
+Chương trình mẫu:
+```cpp
+class Parent {
+public:
+    int a = 10;
+
+protected:
+    int b = 20;
+
+private:
+    int c = 30;
+
+protected:
+    int getC() { return c; }
+};
+
+// Kế thừa theo kiểu private
+class Child : private Parent {
+public:
+    void show() {
+        cout << "a = " << a << endl;        //  Được (a đã trở thành private trong Child)
+        cout << "b = " << b << endl;        //  Được (b cũng trở thành private trong Child)
+        cout << "c = " << getC() << endl;   //  Truy cập gián tiếp c
+    }
+};
+
+int main() {
+    Child c;
+    c.show();
+
+    // cout << c.a;  Lỗi: a là private trong Child → không truy cập được
+}
+```
+</details>
+
+
+
+
+
+<details>
+  <summary><strong> Đa kế thừa </strong></summary>
+
+Khi nhiều lớp cha có các phương thức hoặc thuộc tính trùng tên, việc gọi chúng từ lớp con có thể gây ra sự nhầm lẫn.
+
+Khi một lớp con kế thừa từ hai lớp cha, mà hai lớp cha này đều cùng kế thừa từ cùng một lớp khác. Tình huống này tạo ra cấu trúc hình thoi (diamond), do đó được gọi là vấn đề "Diamond".
+
+```c
+    A
+   / \
+  B   C
+   \ /
+    D
+```
+
++  A là lớp gốc (base class).
+
++  B và C cùng kế thừa từ A.
+
++  D kế thừa từ cả B và C.
+
+
+Nếu A có một thuộc tính hoặc phương thức, thì D sẽ **kế thừa hai bản sao** của A — một từ B, và một từ C. Điều này dẫn đến:
+
++  Nhân đôi dữ liệu từ A.
+
++  Không rõ ràng khi gọi phương thức/thành viên từ A: Gọi A::method() là từ nhánh B hay C?
+
+Ta có một chương trình mẫu như sau:
+
+```cpp
+#include <iostream>
+
+using namespace std;
+
+class A{
+    public:
+        A(){ cout << "Constructor A\n"; }
+
+        void hienThiA(){ cout << "Day la lop A\n"; }
+};
+
+class B : public A{
+    public:
+        B(){ cout << "Constructor B\n"; }
+
+        void hienThiB(){ cout << "Day la lop B\n"; }
+};
+
+class C : public A {
+    public:
+        C(){ cout << "Constructor C\n"; }
+
+        void hienThiC(){ cout << "Day la lop C\n"; }
+};
+
+class D : public B, public C{
+    public:
+        D(){ cout << "Constructor D\n"; }
+
+        void hienThiD(){ cout << "Day la lop D\n"; }
+};
+
+int main() {
+    cout << "Các constructor đã được thực hiện\n";
+
+    D d;             // Contructor của A sẽ được nhân đôi do kế thừa từ cả B và C
+
+    cout << "/////////////////////////////////\n";
+    // d.hienThiA(); // wrong không thể thực hiện do không biết sẽ gọi từ B hay C
+
+    // Gọi phương thức từ lớp A qua B và C
+    cout << "hienThiA từ lớp A thông qua B\n";
+    d.B::hienThiA(); // Gọi hàm hienThiA từ lớp A thông qua B
+    cout << "hienThiA từ lớp A thông qua C\n";
+    d.C::hienThiA(); // Gọi hàm hienThiA từ lớp A thông qua C
+
+    cout << "/////////////////////////////////\n";
+
+    cout << "Các hàm hiển thị từng lớp\n";
+    d.hienThiB();
+    d.hienThiC();
+    d.hienThiD();
+
+    return 0;
+}
+```
+
+Khi chạy sẽ được:
+
+```
+Các constructor đã được thực hiện
+Constructor A
+Constructor B
+Constructor A
+Constructor C
+Constructor D
+/////////////////////////////////
+hienThiA từ lớp A thông qua B
+Day la lop A
+hienThiA từ lớp A thông qua C
+Day la lop A
+/////////////////////////////////
+Các hàm hiển thị từng lớp
+Day la lop B
+Day la lop C
+Day la lop D
+```
 
 </details>
 
