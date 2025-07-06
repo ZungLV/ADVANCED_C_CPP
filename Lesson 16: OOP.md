@@ -505,9 +505,219 @@ Tính đa hình có thể được chia thành hai loại chính:
 <details>
   <summary><strong> Upcasting & Downcasting </strong></summary>
 
+**Upcasting** là việc chuyển (ép kiểu) một con trỏ hoặc tham chiếu của class dẫn xuất (class con) sang class cơ sở (class cha). Đây là thao tác an toàn và được thực hiện tự động mà không cần ép kiểu tường minh.
 
+**Downcasting** là việc chuyển một con trỏ hoặc tham chiếu của class cha về lại class con. Đôi khi đây là thao tác không an toàn và sẽ gây lỗi **undefined behavior**.
+
+
+Ví dụ ta có chương trình sau:
+
+```c
+#include <iostream>
+#include <string>
+using namespace std;
+
+class DoiTuong{
+    protected:
+        string ten;
+        int id;
+
+    public:
+        DoiTuong(){  
+            static int ID = 1;
+            id = ID;
+            ID++;
+        }
+
+        void setName(string _ten){
+            // check chuỗi nhập vào
+            ten = _ten;
+        }
+
+        void display(){
+            cout << "ten: " << ten << endl;
+            cout << "id: " << id << endl;
+        }
+};
+
+class SinhVien : public DoiTuong{
+    protected:
+        string chuyenNganh;
+
+    public:
+        void setChuyenNganh(string _nganh){
+            chuyenNganh = _nganh;
+        }
+
+        void display()  {
+            cout << "ten: " << ten << endl;
+            cout << "id: " << id << endl;
+            cout << "chuyen nganh: " << chuyenNganh << endl;
+        }
+};
+
+class HocSinh : public DoiTuong{
+    protected:
+        string lop;
+   
+    public:
+        void setLop(string _lop){
+            lop = _lop;
+        }
+
+        void display() {
+            cout << "ten: " << ten << endl;
+            cout << "id: " << id << endl;
+            cout << "lop: " << lop << endl;
+        }
+};
+
+int main()
+{
+    SinhVien sv1;
+    sv1.setName("Trung");
+    sv1.setChuyenNganh("TDH");
+
+    HocSinh hs1;
+    hs1.setName("Tuan");
+    hs1.setLop("12A1");
+
+    DoiTuong *dt;
+
+    dt = &sv1;            // Downcasting từ class cha DoiTuong xuống class con SinhVien
+    dt->display();
+
+    dt = &hs1;
+    dt->display();        // Downcasting từ class cha DoiTuong xuống class con HocSinh
+    return 0;
+}
+```
+
+Ở đây ta có:
++  Hàm `display` của class cha có 2 thông tin
++  Hàm `display` của class con có 3 thông tin
+Sau khi chuyển một con trỏ của class cha về lại class con ta chạy chương trình được
+
+```
+ten: Trung
+id: 1
+ten: Tuan
+id: 2
+```
+
+Mặc dù class con có 3 thông tin nhưng khi được class cha trỏ vào thì chỉ còn lại 2 thông tin, 1 thông tin mất đi. Để không mất đi thông tin ta có thể ép lại kiểu class con khi gọi hàm.
+
+Sửa lại trong hàm `main`:
+
+```c
+int main()
+{
+    SinhVien sv1;
+    sv1.setName("Trung");
+    sv1.setChuyenNganh("TDH");
+
+    HocSinh hs1;
+    hs1.setName("Tuan");
+    hs1.setLop("12A1");
+
+    DoiTuong *dt;
+
+    dt = &sv1;                        // Downcasting từ class cha DoiTuong xuống class con SinhVien
+    ((SinhVien*)dt)->display();       // Ép lại kiểu SinhVien
+
+    dt = &hs1;                        // Downcasting từ class cha DoiTuong xuống class con HocSinh
+    ((HocSinh*)dt)->display();        // Ép lại kiểu HocSinh
+    return 0;
+}
+```
+
+Kết quả:
+
+```
+ten: Trung
+id: 1
+chuyen nganh: TDH
+ten: Tuan
+id: 2
+lop: 12A1
+```
+
+Viết thêm vào hàm `main` như sau:
+
+```cpp
+int main()
+{
+    SinhVien sv1;
+    sv1.setName("Trung");
+    sv1.setChuyenNganh("TDH");
+
+    HocSinh hs1;
+    hs1.setName("Tuan");
+    hs1.setLop("12A1");
+
+    DoiTuong *dt;
+
+    dt = &sv1;                        // Downcasting từ class cha DoiTuong xuống class con SinhVien
+    ((SinhVien*)dt)->display();       // Ép lại kiểu SinhVien
+    cout<<"############################################\n";
+
+    dt = &hs1;                        // Downcasting từ class cha DoiTuong xuống class con HocSinh
+    ((HocSinh*)dt)->display();        // Ép lại kiểu HocSinh
+    cout<<"############################################\n";
+
+    SinhVien *sv = &sv1;
+    ((DoiTuong*)sv)->display();       // Upcasting từ class con SinhVien lên class cha DoiTuong
+
+    return 0;
+}
+```
+
+Ta có class con `SinhVien` được ép kiểu (upcasting) lên class cha `DoiTuong`. Khi này từ một class con có 3 thông tin đã bị giảm xuống còn 2 thông tin như class cha:
+
+```
+ten: Trung
+id: 1
+chuyen nganh: TDH
+############################################
+ten: Tuan
+id: 2
+lop: 12A1
+############################################
+ten: Trung
+id: 1
+```
+</details>
+
+
+
+<details>
+  <summary><strong> Hàm ảo (Virtual Function) </strong></summary>
+
+Hàm ảo là một hàm thành viên được khai báo trong **class cha** với từ khóa `virtual`.
+
+Khi một hàm là `virtual`, nó có thể được ghi đè (**override**) trong class con để cung cấp cách triển khai riêng.
+
+Khi gọi một hàm ảo thông qua một con trỏ hoặc tham chiếu đến lớp con, hàm sẽ được **quyết định dựa trên đối tượng thực tế** mà con trỏ hoặc tham chiếu đang trỏ tới chứ không dựa vào kiểu của con trỏ.
+
+Cú pháp `virtual`:
+
+```cpp
+class Base
+{
+    public:
+        virtual void display()
+ 		{
+            cout << "Display from Base class" << endl;
+    }
+};
+```
 
 </details>
+
+
+
+
+
 
 
 </details>
