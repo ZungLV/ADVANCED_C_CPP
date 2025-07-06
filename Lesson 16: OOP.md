@@ -474,6 +474,65 @@ Day la lop D
 
 
 
+<details>
+  <summary><strong> Tính đa hình </strong></summary>
+
+
+
+
+
+<details>
+  <summary><strong> Tổng quan tính đa hình </strong></summary>
+
+Tính đa hình (Polymorphism) có nghĩa là "nhiều dạng" và nó xảy ra khi chúng ta có nhiều class có liên quan với nhau thông qua tính kế thừa. 
+
+Tính đa hình cho phép một hành động hoặc phương thức có thể có nhiều cách thực thi khác nhau, tùy thuộc vào đối tượng thực hiện nó.
+
+Tính đa hình có thể được chia thành hai loại chính:
++  Đa hình tại thời điểm biên dịch (Compile-time Polymorphism).
++  Đa hình tại thời điểm chạy (Run-time Polymorphism).
+
+</details>
+
+
+
+
+
+<details>
+  <summary><strong> Đa hình tại thời điểm biên dịch </strong></summary>
+
+
+<details>
+  <summary><strong> Upcasting & Downcasting </strong></summary>
+
+
+
+</details>
+
+
+</details>
+
+
+
+
+
+
+
+
+<details>
+  <summary><strong> Đa hình tại thời điểm chạy </strong></summary>
+
+
+</details>
+
+
+
+
+
+</details>
+
+
+
 
 
 
