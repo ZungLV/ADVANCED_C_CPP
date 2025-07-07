@@ -499,7 +499,7 @@ Tính đa hình có thể được chia thành hai loại chính:
 
 
 <details>
-  <summary><strong> Đa hình tại thời điểm biên dịch </strong></summary>
+  <summary><strong> Đa hình tại thời điểm chạy </strong></summary>
 
 
 <details>
@@ -605,7 +605,7 @@ ten: Tuan
 id: 2
 ```
 
-Mặc dù class con có 3 thông tin nhưng khi được class cha trỏ vào thì chỉ còn lại 2 thông tin, 1 thông tin mất đi. Để không mất đi thông tin ta có thể ép lại kiểu class con khi gọi hàm.
+Mặc dù class con có 3 thông tin nhưng khi được class cha trỏ vào thì chỉ còn lại 2 thông tin, 1 thông tin mất đi (do kiểu con trỏ class cha chỉ có 2 thông tin). Để không mất đi thông tin ta có thể ép lại kiểu class con khi gọi hàm.
 
 Sửa lại trong hàm `main`:
 
@@ -712,6 +712,133 @@ class Base
 };
 ```
 
+Ta có chương trình mẫu như sau:
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class DoiTuong{
+    protected:
+        string ten;
+        int id;
+
+    public:
+        DoiTuong(){  
+            static int ID = 1;
+            id = ID;
+            ID++;
+        }
+
+        void setName(string _ten){
+            // check chuỗi nhập vào
+            ten = _ten;
+        }
+
+        virtual void display(){             // Tạo hàm ảo
+            cout << "ten: " << ten << endl;
+            cout << "id: " << id << endl;
+        }
+};
+
+class SinhVien : public DoiTuong{
+    protected:
+        string chuyenNganh;
+
+    public:
+        void setChuyenNganh(string _nganh){
+            chuyenNganh = _nganh;
+        }
+
+        void display()  {
+            DoiTuong::display();
+            cout << "chuyen nganh: " << chuyenNganh << endl;
+        }
+};
+
+int main()
+{
+    SinhVien sv1;
+    sv1.setName("Trung");
+    sv1.setChuyenNganh("TDH");
+
+    DoiTuong *dt = &sv1;
+    dt->display();
+
+    return 0;
+}
+```
+
+Ở đây ta có:
++  `virtual void display()`: Tạo một hàm ảo, và hàm này sẽ được mở rộng ở hàm con
++  `DoiTuong::display()`: Kế thừa lại hàm cha, khi chạy `display` sẽ chạy luôn display ở hàm cha
+
+Chạy chương trình:
+
+```
+ten: Trung
+id: 1
+chuyen nganh: TDH
+```
+
+Như vậy ta thấy rằng mặc dù kiểu con trỏ class cha có 2 thông tin, nhưng mặc dù không ép kiểu khi gọi `display` thì vẫn ra 3 thông tin như class con. Vì vậy có nghĩa là khi sử dụng từ khóa `virtual` hàm sẽ được quyết định dựa trên đối tượng thực tế mà con trỏ hoặc tham chiếu đang trỏ tới chứ không dựa vào kiểu của con trỏ.
+
+</details>
+
+
+
+
+
+
+<details>
+  <summary><strong> Override & Overload </strong></summary>
+
++ **Override**: Khi một hàm ảo được ghi đè, hành vi của nó sẽ phụ thuộc vào kiểu của đối tượng thực tế, chứ không phải kiểu của con trỏ hay tham chiếu.
+Tính đa hình runtime xảy ra khi quyết định gọi hàm nào (phiên bản của class cha hay class con) được đưa ra tại thời điểm chạy, không phải lúc biên dịch, giúp mở rộng chức năng. Điều này giúp chương trình linh hoạt hơn, cho phép việc mở rộng chức năng mà không cần sửa đổi mã nguồn hiện tại.
+
+```cpp
+class DoiTuong{
+    protected:
+        string ten;
+        int id;
+
+    public:
+        DoiTuong(){  
+            static int ID = 1;
+            id = ID;
+            ID++;
+        }
+
+        void setName(string _ten){
+            // check chuỗi nhập vào
+            ten = _ten;
+        }
+
+        virtual void display(){             // Tạo hàm ảo
+            cout << "ten: " << ten << endl;
+            cout << "id: " << id << endl;
+        }
+};
+
+class SinhVien : public DoiTuong{
+    protected:
+        string chuyenNganh;
+
+    public:
+        void setChuyenNganh(string _nganh){
+            chuyenNganh = _nganh;
+        }
+
+        void display()  {                   // Override
+            DoiTuong::display();
+            cout << "chuyen nganh: " << chuyenNganh << endl;
+        }
+};
+```
+
+Trong đó hàm `display` trong class cha là **hàm ảo**, hàm `display` trong class con **ghi đè lại** hàm trong class cha, như vậy đây là **override**.
+
 </details>
 
 
@@ -730,7 +857,7 @@ class Base
 
 
 <details>
-  <summary><strong> Đa hình tại thời điểm chạy </strong></summary>
+  <summary><strong> Đa hình tại thời điểm biên dịch </strong></summary>
 
 
 </details>
