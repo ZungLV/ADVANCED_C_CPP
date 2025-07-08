@@ -691,7 +691,9 @@ id: 1
 
 
 <details>
-  <summary><strong> Hàm ảo (Virtual Function) </strong></summary>
+  <summary><strong> Virtual & Pure Virtual </strong></summary>
+
++  **Hàm ảo (Virtual Function)**
 
 Hàm ảo là một hàm thành viên được khai báo trong **class cha** với từ khóa `virtual`.
 
@@ -783,6 +785,53 @@ chuyen nganh: TDH
 ```
 
 Như vậy ta thấy rằng mặc dù kiểu con trỏ class cha có 2 thông tin, nhưng mặc dù không ép kiểu khi gọi `display` thì vẫn ra 3 thông tin như class con. Vì vậy có nghĩa là khi sử dụng từ khóa `virtual` hàm sẽ được quyết định dựa trên đối tượng thực tế mà con trỏ hoặc tham chiếu đang trỏ tới chứ không dựa vào kiểu của con trỏ.
+
++  **Hàm thuần ảo (Pure Virtual Function)**
+
+Hàm thuần ảo là một **hàm ảo không có phần định nghĩa** trong class cha, được khai báo với **cú pháp = 0** và khiến class cha trở thành **class trừu tượng (abstract class)**, nghĩa là không thể tạo đối tượng từ class này.
+
+Ví dụ ta có chương trình sau:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class cha{
+    public:
+        virtual void display() = 0; // Hàm ảo thuần túy
+};
+
+class con : public cha{
+    public:
+        void display() override{   // Ghi đè hàm thuần ảo
+            cout << "display from class con" << endl;
+        }
+};
+
+int main(){
+    // cha ptr; // wrong
+    cha *ptr;
+    con obj;
+
+    ptr = &obj;
+    ptr->display();
+
+    return 0;
+}
+```
+
+Ở đây ta có:
++  Không thể tạo đối tượng với class cha (`cha ptr;` không hợp lệ)
++  Cú pháp hàm thuần ảo
+```cpp
+  virtual void display() = 0; // Hàm ảo thuần túy
+```
+
+Kết quả:
+```
+display from class con
+```
+
 
 </details>
 
@@ -947,8 +996,30 @@ Hàm ảo `override` sẽ có địa chỉ khác với hàm ảo trong class cha
 
 
 <details>
-  <summary><strong> Đa hình tại thời điểm biên dịch </strong></summary>
+  <summary><strong> Interface & Abstract Class </strong></summary>
 
+**Interface** là một class **chỉ chứa các hàm thuần ảo (pure virtual)** và không có bất kỳ cài đặt nào.
+
+```cpp
+class IExample
+{
+    public:
+        virtual void func1() = 0;
+        virtual void func2() = 0;
+        virtual ~IExample(){}
+};
+```
+
+**Abstract Class** là class có **ít nhất một hàm thuần ảo**, nhưng có thể chứa cả hàm thường và dữ liệu thành viên (có thể có cài đặt).
+
+```cpp
+class Base
+{
+    public:
+        virtual void foo() = 0; // hàm thuần ảo
+        void commonFunc() {}    // hàm thường
+};
+```
 
 </details>
 
