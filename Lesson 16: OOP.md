@@ -1317,10 +1317,128 @@ Các đặc điểm của **this pointer**:
 6.  Không dùng được trong static function, vì static function không gắn với bất kỳ object nào ⇒ không có `this`.
 
 ```cpp
+#include <iostream>
+using namespace std;
 
+class Student
+{
+    private:
+        string name;
+
+    public:
+        void show_adr()
+        {
+            cout << "Địa chỉ của con trỏ this là: " << this << endl;    
+        }
+};
+
+int main()
+{
+    Student sv1, sv2;
+
+    cout << "Địa chỉ của sv1 là: " << &sv1 << endl;    
+    sv1.show_adr();
+
+    cout << "Địa chỉ của sv2 là: " << &sv2 << endl;    
+    sv2.show_adr();
+
+    return 0;
+}
+```
+```
+Địa chỉ của sv1 là: 0x13305ff9d0
+Địa chỉ của con trỏ this là: 0x13305ff9d0
+Địa chỉ của sv2 là: 0x13305ff9b0
+Địa chỉ của con trỏ this là: 0x13305ff9b0
 ```
 
+Như vậy con trỏ `this` sẽ có địa chỉ tương ứng với đối tượng hiện tại mà hàm đang được gọi ra.
+
 </details>
+
+
+
+
+
+<details>
+  <summary><strong> Pass by value & reference </strong></summary>
+
+## Tham trị (Pass By Value)
+
+Tham trị là cách truyền một bản sao của biến vào hàm. Mọi thay đổi trong hàm không ảnh hưởng đến biến gốc bên ngoài.
+
+Ví dụ:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+void modify(int x)
+{ 
+x = x + 10;
+}
+
+int main()
+{
+    int a = 5;
+    modify(a);
+    cout << a << endl; // Output: 5
+}
+```
+```
+5
+```
+
+Mặc dù đã truyền `a` vào phương trình `x = x + 10` nhưng khi in `a` ra màn hình thì `a` vẫn bằng 5. Điều này do khi ta truyền `a` vào hàm thì là chỉ truyền bản sao.
+
+## Tham chiếu (Pass By Reference)
+
+Tham chiếu là cách tạo ra **một tên khác** để truy cập cùng một vùng nhớ của một biến/đối tượng **đã tồn tại**.
+
+```cpp
+type& referenceName = variable;
+```
+
+Trong đó:
++  `type`: kiểu dữ liệu
++  `&`: ký hiệu cho tham chiếu (khác với con trỏ)
++  `referenceName`: tên tham chiếu
++  `variable`: biến đã khai báo
+
+Ví dụ:
+```cpp
+#include <iostream>
+using namespace std;
+
+void modify(int &x)
+{ 
+x = x + 10;
+}
+
+int main()
+{
+    int a = 5;
+    int& ref = a;
+    ref = 100;
+    cout << a << endl; // Output: 100
+
+    modify(ref);
+    cout << a << endl; // Output: 110
+
+}
+```
+```
+100
+110
+```
+Như vậy:
++  `ref`: dùng để truy cập cùng một vùng nhớ của biến `a`, khi `ref` thay đổi giá trị thì `a` cũng thay đổi theo.
++  `void modify(int &x)`: cũng giống như cách làm với con trỏ, hàm muốn thay đổi dữ liệu tham số phải có kí tự `&`.
++  `modify(ref);`: có thể thay đổi giá trị của `a` bằng hàm nhờ `ref`.
+
+</details>
+
+
 
 
 
