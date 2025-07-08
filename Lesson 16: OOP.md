@@ -1295,10 +1295,32 @@ int main()
 8 + 10i
 Hai số phức không bằng nhau
 ```
-
-
 </details>
 
+
+
+
+
+<details>
+  <summary><strong> This Pointer </strong></summary>
+
+**this** là một **con trỏ ẩn** (ẩn danh) có sẵn trong mọi hàm thành viên (method) của class. 
+
+**this pointer** trỏ đến đối tượng hiện tại mà hàm đang được gọi ra.
+
+Các đặc điểm của **this pointer**:
+1.  `this` chỉ tồn tại trong hàm thành viên của class, không có trong các hàm `static` hoặc hàm `global`.
+2.  `this` là con trỏ trỏ đến đối tượng gọi hàm hiện tại.
+3.  Có kiểu là con trỏ đến class, ví dụ trong class `Person`, thì this có kiểu là `Person*`
+4.  Không thể thay đổi giá trị của con trỏ (Person const *this)
+5.  Giúp phân biệt biến thành viên và tham số cùng tên, `this→` giúp truy cập chính xác biến trong class.
+6.  Không dùng được trong static function, vì static function không gắn với bất kỳ object nào ⇒ không có `this`.
+
+```cpp
+
+```
+
+</details>
 
 
 
