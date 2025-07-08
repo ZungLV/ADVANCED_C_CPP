@@ -1107,6 +1107,202 @@ class Base
   <summary><strong> Đa hình tại thời điểm biên dịch </strong></summary>
 
 
+
+
+<details>
+  <summary><strong> Function Overloading </strong></summary>
+
+**Nạp chồng hàm (Function Overloading)** là việc định nghĩa nhiều **hàm cùng tên** nhưng **khác tham số** trong cùng **một phạm vi**.
+
+Trình biên dịch sẽ chọn hàm phù hợp dựa trên **kiểu và số lượng đối số** khi gọi hàm.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+void print(int a){ cout << "Integer: " << a << endl; }
+
+void print(double b){ cout << "Double: " << b << endl; }
+
+void print(string s){ cout << "String: " << s << endl; }
+
+int main()
+{
+    print(5);
+    print(3.14);
+    print("Hello");
+    return 0;
+}
+```
+```
+Integer: 5
+Double: 3.14
+String: Hello
+```
+
+Ta có 3 hàm `print()` cùng tên nhưng mỗi hàm lại có kiểu tham số khác nhau. Khi gọi hàm `print()` tùy vào kiểu dữ liệu của tham số đưa vào hàm thì sẽ trả về hàm đứng với kiểu dữ liệu đó.
+
+Một ví dụ khác:
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+// 1 method có thể có nhiều input parameter, return type khác nhau
+class TinhToan{
+    private:
+        int a;
+        int b;
+    public:
+        int tong(int a, int b){
+            return a+b;
+        }
+        double tong(int a, int b, int c, double d){
+            return (double)a+b+c+d;
+        }
+        double tong(int a, double b){
+            return (double)a+b;
+        }
+};
+
+int main(int argc, char const *argv[])
+{
+    TinhToan th, th1, th2;
+    cout << th.tong(2, 5) << endl;
+    cout << th1.tong(2, 5, 7, 6.7) << endl;
+    cout << th2.tong(2, 3.5) << endl;
+    return 0;
+}
+```
+```
+7
+20.7
+5.5
+```
+
+Các phương thức cùng tên không chỉ có thể có có **các tham số khác nhau** mà còn có thể có **các kiểu trả về khác nhau**. Dựa vào **kiểu dữ liệu đưa vào tham số** mà **trả về kiểu dữ liệu tương ứng**.
+
+</details>
+
+
+
+<details>
+  <summary><strong> Operator Overloading </strong></summary>
+
+**Nạp chồng toán tử** (Operator Overloading) là việc định nghĩa lại cách hoạt động của các toán tử (+, -, =, ==, <<, >>,...) cho các kiểu dữ liệu do người dùng định nghĩa (**class/struct**).
+
+Cú pháp:
+```cpp
+<return_type> operator symbol (parameters)
+{
+    // logic của toán tử
+}
+```
+
+Các toán tử có thể định nghĩa lại:
++	–	*	/	%	^	&	|	~	!	=	<	>	+=	-=	*=
+/=	%=	^=	&=	|=	<<	>>	>>=		<<=	==	!=	<=	>=	&&	||	++
+—	->*	,	->	[]	()	new	delete	new[]	delete[]
+
+Các toán tử không thể định nghĩa lại:
++  Toán tử . (chấm)
++  Toán tử phạm vi ::
++  Toán tử điều kiện ?:
++  Toán tử sizeof
+
+Ví dụ ta có chương trình dùng để tính tổng và so sánh số phức như sau:
+
+```cpp
+class Complex
+{
+    private:
+        double realPart;    // phần thực
+        double imagPart;    // phần ảo
+   
+    public:
+        Complex(double real = 0, double imag = 0): realPart(real), imagPart(imag){}
+
+        // nạp chồng toán tử +
+        Complex operator + (const Complex other) const
+        {
+            Complex result;
+            result.realPart = realPart + other.realPart;
+            result.imagPart = imagPart + other.imagPart;
+            return result;
+        }
+
+        // nạp chồng toán tử so sánh bằng (==)
+        bool operator == (const Complex other) const
+        {
+            return (realPart == other.realPart && imagPart == other.imagPart);
+        }
+
+        // hàm hiển thị
+        void display() const
+        {
+            cout << realPart << " + " << imagPart << "i" << endl;
+        }
+};
+```
+
+Ta có:
++  Vì là số phức nên sẽ có hai thuộc tính là phần thực và phần ảo:
+```cpp
+double realPart;    // phần thực
+double imagPart;    // phần ảo
+```
++  Hàm nạp chồng toán tử `+` để tính tổng số phức:
+```cpp
+Complex operator + (const Complex other) const // other là tham số tham gia sau toán tử, chỉ được phép có một tham số đối với các phép toán
+{
+    Complex result;
+    result.realPart = realPart + other.realPart;
+    result.imagPart = imagPart + other.imagPart;
+    return result;
+}
+```
++ Hàm nạp chồng toán tử `==` để so sánh số phức:
+```cpp
+bool operator == (const Complex other) const
+{
+return (realPart == realPart && imagPart == imagPart);
+}
+```
+
+Hàm trong `main`:
+```cpp
+int main()
+{
+    Complex c1(3,4);
+    Complex c2(5,6);
+    Complex c3 = c1 + c2;
+    c1.display();
+    c2.display();
+    c3.display();
+
+    if (c1 == c2){
+        cout << "Hai số phức bằng nhau" << endl;
+    } else {
+        cout << "Hai số phức không bằng nhau" << endl;
+    }
+    return 0;
+}
+```
+```
+3 + 4i
+5 + 6i
+8 + 10i
+Hai số phức không bằng nhau
+```
+
+
+</details>
+
+
+
+
+
 </details>
 
 
