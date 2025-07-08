@@ -1436,6 +1436,16 @@ Như vậy:
 +  `void modify(int &x)`: cũng giống như cách làm với con trỏ, hàm muốn thay đổi dữ liệu tham số phải có kí tự `&`.
 +  `modify(ref);`: có thể thay đổi giá trị của `a` bằng hàm nhờ `ref`.
 
+## So sánh giữa con trỏ và tham chiếu
+
+**Con trỏ**
++  Là biến nên sẽ tốn bộ nhớ RAM.
++  Có thể trỏ vào địa chỉ không tồn tại, trỏ vào NULL.
+
+**Tham chiếu**
++  Là tên nên sẽ không tốn bộ nhớ RAM.
++  Bắt buộc địa chỉ phải tồn tại
+
 </details>
 
 
