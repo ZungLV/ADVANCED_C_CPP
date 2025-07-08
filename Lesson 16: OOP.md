@@ -830,14 +830,83 @@ class SinhVien : public DoiTuong{
             chuyenNganh = _nganh;
         }
 
-        void display()  {                   // Override
+        void display() override
+        {                   // Override
             DoiTuong::display();
             cout << "chuyen nganh: " << chuyenNganh << endl;
         }
 };
 ```
 
-Trong đó hàm `display` trong class cha là **hàm ảo**, hàm `display` trong class con **ghi đè lại** hàm trong class cha, như vậy đây là **override**.
+Trong đó hàm `display` trong class cha là **hàm ảo**, hàm `display` trong class con **ghi đè lại** hàm trong class cha, như vậy đây là **override**. Khi khai báo hàm con ghi đè từ một hàm ảo ở hàm cha ta có thể viết thêm từ khóa `override` để phân biệt.
+
+```cpp
+void display() override
+```
+
++ **Overload**: Overload là khả năng cho phép nhiều class con sửa đổi hàm của class nhưng vẫn giữ chung một tên gọi. Khi sử dụng overload ta có thể thay đổi tham số hàm ở class con theo ý muốn, điều mà ta không thể làm được ở override. Không như override overload không có từ khóa để phân biệt.
+
+```cpp
+#include <iostream>
+#include <string>
+using namespace std;
+
+class DoiTuong{
+    protected:
+        string ten;
+        int id;
+
+    public:
+        DoiTuong(){  
+            static int ID = 1;
+            id = ID;
+            ID++;
+        }
+
+        void setName(string _ten){
+            // check chuỗi nhập vào
+            ten = _ten;
+        }
+
+        virtual void display(){             // Tạo hàm ảo
+            cout << "ten: " << ten << endl;
+            cout << "id: " << id << endl;
+        }
+};
+
+class SinhVien : public DoiTuong{
+    protected:
+        string chuyenNganh;
+
+    public:
+        void setName(string _ten, int num){
+            ten = _ten;
+            cout << "Hàm class con overload thêm số: " << num << "\n";
+        }
+
+        void display() override
+        {                   
+            DoiTuong::display();
+            cout << "chuyen nganh: " << ten << endl;
+        }
+};
+
+int main()
+{
+    SinhVien sv1;
+    sv1.setName("Trung",100);
+    return 0;
+}
+```
+
+Ta có hàm `void setName(string _ten, int num)` được bổ sung thêm tham số `num` so với hàm trong class cha và khi ta chạy chương trình:
+
+```
+Hàm class con overload thêm số: 100
+ten: Trung
+id: 1
+chuyen nganh: Trung
+```
 
 </details>
 
