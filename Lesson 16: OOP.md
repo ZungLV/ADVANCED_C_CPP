@@ -844,7 +844,7 @@ Trong đó hàm `display` trong class cha là **hàm ảo**, hàm `display` tron
 void display() override
 ```
 
-+ **Overload**: Overload là khả năng cho phép nhiều class con sửa đổi hàm của class nhưng vẫn giữ chung một tên gọi. Khi sử dụng overload ta có thể thay đổi tham số hàm ở class con theo ý muốn, điều mà ta không thể làm được ở override. Không như override overload không có từ khóa để phân biệt.
++ **Overload**: Overload là khả năng cho phép nhiều class con sửa đổi hàm của class nhưng vẫn giữ chung một tên gọi. Khi sử dụng overload ta có thể thay đổi tham số hàm ở class con theo ý muốn, điều mà ta không thể làm được ở override. Không như override, overload không có từ khóa để phân biệt.
 
 ```cpp
 #include <iostream>
@@ -910,6 +910,47 @@ chuyen nganh: Trung
 
 </details>
 
+
+
+
+<details>
+  <summary><strong> vtable </strong></summary>
+
++ **vtable**
+
+**vtable (virtual table)** là một bảng tra cứu các con trỏ hàm mà trình biên dịch tạo ra để hỗ trợ tính đa hình động (dynamic polymorphism) của các hàm ảo (virtual function).
+
+Mỗi class có **ít nhất một hàm ảo** hoặc **kế thừa từ class có hàm ảo** sẽ được trình biên dịch tạo một bảng vtable riêng tương ứng với class đó.
+
+vtable giúp đảm bảo rằng hàm đúng của class con được gọi, kể cả khi dùng con trỏ/đối tượng của lớp cha.
+
++ **vpointer**
+
+Mỗi object của class có hàm ảo đều sẽ có một vpointer (vptr) để trỏ tới vtable tương ứng.
+
+vpointer thường được trình biên dịch tự động thêm vào như một thành viên ẩn của object.
+
+Khi gọi hàm ảo, chương trình sẽ lấy vtable thông qua vptr, sau đó tra địa chỉ hàm đúng (tùy theo object thực sự thuộc class nào).
+
++ Hoạt động khi gọi hàm ảo:
+1. Lấy `vptr` từ object.
+2. Trỏ tới `vtable` của class thực tế của object.
+3. Lấy đúng địa chỉ hàm `override`.
+4. Gọi hàm
+
+Hàm ảo `override` sẽ có địa chỉ khác với hàm ảo trong class cha. Nếu gọi hàm ảo `override` thì `vtable` sẽ trỏ đúng vào địa chỉ hàm ảo `override` của class con, còn không sẽ trỏ vào địa chỉ hàm ảo được kế thừa ở class cha.
+
+</details>
+
+
+
+
+
+<details>
+  <summary><strong> Đa hình tại thời điểm biên dịch </strong></summary>
+
+
+</details>
 
 
 
