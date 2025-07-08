@@ -460,6 +460,67 @@ Day la lop C
 Day la lop D
 ```
 
+## **Kế thừa ảo**
+
++  **Kế thừa ảo** giúp tránh vấn đề **diamond problem** trong đa kế thừa.
+
++  Chỉ có một bản sao duy nhất của lớp cơ sở chung được kế thừa.
+
++  Kế thừa ảo giúp quản lý các lớp liên quan đến phần cứng và giao tiếp. Điều này giúp tránh trùng lặp tài nguyên và quản lý hiệu quả trong hệ thống nhúng.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+class A {
+    public:
+        A(){ cout << "Constructor A\n"; }
+
+        void hienThiA(){ cout << "Day la lop A\n"; }
+};
+
+class B : virtual public A{
+    public:
+        B(){ cout << "Constructor B\n"; }
+
+        void hienThiB(){ cout << "Day la lop B\n"; }
+};
+
+class C : virtual public A {
+    public:
+        C(){ cout << "Constructor C\n"; }
+
+        void hienThiC(){ cout << "Day la lop C\n"; }
+};
+
+class D : public B, public C{
+    public:
+        D(){ cout << "Constructor D\n"; }
+
+        void hienThiD(){ cout << "Day la lop D\n"; }
+};
+
+int main() {
+    D d;
+
+    d.hienThiA();
+
+    return 0;
+}
+```
+
+Kết quả chạy được 
+
+```
+Constructor A
+Constructor B
+Constructor C
+Constructor D
+Day la lop A
+```
+
+Như này khi khởi tạo đối tượng của lớp con `D`, constructor của class `D` không còn in ra 2 lần `Constructor A` nữa. Lúc này `D` chỉ còn kế thừa một hàm constructor `A()` duy nhất.
+
 </details>
 
 
@@ -693,7 +754,7 @@ id: 1
 <details>
   <summary><strong> Virtual & Pure Virtual </strong></summary>
 
-+  **Hàm ảo (Virtual Function)**
+## **Hàm ảo (Virtual Function)**
 
 Hàm ảo là một hàm thành viên được khai báo trong **class cha** với từ khóa `virtual`.
 
@@ -786,7 +847,7 @@ chuyen nganh: TDH
 
 Như vậy ta thấy rằng mặc dù kiểu con trỏ class cha có 2 thông tin, nhưng mặc dù không ép kiểu khi gọi `display` thì vẫn ra 3 thông tin như class con. Vì vậy có nghĩa là khi sử dụng từ khóa `virtual` hàm sẽ được quyết định dựa trên đối tượng thực tế mà con trỏ hoặc tham chiếu đang trỏ tới chứ không dựa vào kiểu của con trỏ.
 
-+  **Hàm thuần ảo (Pure Virtual Function)**
+## **Hàm thuần ảo (Pure Virtual Function)**
 
 Hàm thuần ảo là một **hàm ảo không có phần định nghĩa** trong class cha, được khai báo với **cú pháp = 0** và khiến class cha trở thành **class trừu tượng (abstract class)**, nghĩa là không thể tạo đối tượng từ class này.
 
@@ -822,10 +883,15 @@ int main(){
 
 Ở đây ta có:
 +  Không thể tạo đối tượng với class cha (`cha ptr;` không hợp lệ)
++  Có thể tạo đối tượng là con trỏ với class cha
+```cpp
+cha *ptr;
+```
 +  Cú pháp hàm thuần ảo
 ```cpp
   virtual void display() = 0; // Hàm ảo thuần túy
 ```
++  Khi class cha có hàm thuần ảo, class con khi kế thừa phải viết rõ hàm thuần ảo (override) ra nếu không sẽ không tạo đối tượng được
 
 Kết quả:
 ```
@@ -965,7 +1031,7 @@ chuyen nganh: Trung
 <details>
   <summary><strong> vtable </strong></summary>
 
-+ **vtable**
+## **vtable**
 
 **vtable (virtual table)** là một bảng tra cứu các con trỏ hàm mà trình biên dịch tạo ra để hỗ trợ tính đa hình động (dynamic polymorphism) của các hàm ảo (virtual function).
 
@@ -973,7 +1039,7 @@ Mỗi class có **ít nhất một hàm ảo** hoặc **kế thừa từ class c
 
 vtable giúp đảm bảo rằng hàm đúng của class con được gọi, kể cả khi dùng con trỏ/đối tượng của lớp cha.
 
-+ **vpointer**
+## **vpointer**
 
 Mỗi object của class có hàm ảo đều sẽ có một vpointer (vptr) để trỏ tới vtable tương ứng.
 
@@ -981,7 +1047,7 @@ vpointer thường được trình biên dịch tự động thêm vào như m�
 
 Khi gọi hàm ảo, chương trình sẽ lấy vtable thông qua vptr, sau đó tra địa chỉ hàm đúng (tùy theo object thực sự thuộc class nào).
 
-+ Hoạt động khi gọi hàm ảo:
+## Hoạt động khi gọi hàm ảo:
 1. Lấy `vptr` từ object.
 2. Trỏ tới `vtable` của class thực tế của object.
 3. Lấy đúng địa chỉ hàm `override`.
