@@ -109,6 +109,56 @@ class <name_of_class>
         T var;
 }
 ```
+Ví dụ minh họa:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+template <typename T>
+class Sensor{
+    private:
+        T value;
+    public:
+        Sensor(T init): value(init){}
+        void display(){ cout << "Gia tri cam bien: " << value << endl; }
+};
+
+int main(int argc, char const *argv[]){
+    Sensor tempSensor(36.5);
+    tempSensor.display();
+
+    Sensor lightSensor(512);
+    lightSensor.display();
+
+    Sensor stateSensor("OFF");
+    stateSensor.display();
+    return 0;
+}
+```
+
+```
+Gia tri cam bien: 36.5
+Gia tri cam bien: 512
+Gia tri cam bien: OFF
+```
+
+Kiểu dữ liệu của `value` sẽ phụ thuộc vào kiểu dữ liệu của tham số truyền vào constructor `Sensor`
+
+Trong một số trường hợp ta còn có thể ép kiểu cho class để có được kiểu dữ liệu mong muốn bằng cách thêm `<kiểu dữ liệu>` trước tên class
+
+Ví dụ trong hàm main:
+```cpp
+int main(int argc, char const *argv[]){
+    Sensor<int> tempSensor(36.5);
+    tempSensor.display();
+
+    return 0;
+```
+```
+Gia tri cam bien: 36
+```
+Mặc dù truyền vào constructor là kiểu `double` nhưng khi nhận về `value` là kiểu `int` đã được ép kiểu
 
 </details>
 
