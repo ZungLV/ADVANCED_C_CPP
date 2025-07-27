@@ -82,12 +82,6 @@ error: no matching function for call to 'maxValue(int, double)'
 
 Do `template` được tạo là 2 tham số cùng kiểu dữ liệu nên khi truyền vào hàm hai tham số khác nhau khiến chương trình không thể tìm thấy hàm phù hợp với yêu cầu, dẫn đến lỗi.
 
-Một ví dụ khác:
-
-```cpp
-
-```
-
 </details>
 
 
@@ -160,8 +154,167 @@ Gia tri cam bien: 36
 ```
 Mặc dù truyền vào constructor là kiểu `double` nhưng khi nhận về `value` là kiểu `int` đã được ép kiểu
 
+Một ví dụ khác:
+```c
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Sensor
+{
+    public:
+        virtual double getValue() const = 0;
+
+        virtual string getUnit() const = 0;
+};
+
+// Class đại diện cho cảm biến nhiệt độ (Temperature Sensor)
+class TemperatureSensor : public Sensor
+{
+    private:
+        double temp;
+
+    public:
+        double getValue() const override
+        {
+            // temp = 30.3;
+            return 40.5; // Giá trị cảm biến giả định
+        }
+
+        string getUnit() const override
+        {
+            return "Celsius";
+        }
+};
+
+// Class đại diện cho cảm biến áp suất lốp (Tire Pressure Sensor)
+class TirePressureSensor : public Sensor
+{
+    public:
+        double getValue() const override
+        {
+            return 32; // Giá trị cảm biến giả định
+        }
+
+        string getUnit() const override
+        {
+            return "PSI";
+        }
+};
+
+// Template class quản lý hai cảm biến khác nhau
+template <typename Sensor1, typename Sensor2>
+class VehicleSensors
+{
+    private:
+        Sensor1 sensor1;  // Đối tượng cảm biến 1
+        Sensor2 sensor2;  // Đối tượng cảm biến 2
+
+    public:
+        // Constructor nhận vào hai đối tượng cảm biến
+        VehicleSensors(Sensor1 s1, Sensor2 s2) : sensor1(s1), sensor2(s2) {}
+
+        // Hàm hiển thị thông tin của cả hai cảm biến
+        void displaySensorsInfo() const
+        {
+            cout << "Sensor 1 Value: " << sensor1.getValue() << " " << sensor1.getUnit() << endl;
+            cout << "Sensor 2 Value: " << sensor2.getValue() << " " << sensor2.getUnit() << endl;
+        }
+};
+
+int main()
+{
+    // Tạo đối tượng cảm biến nhiệt độ
+    TemperatureSensor tempSensor;
+
+    // Tạo đối tượng cảm biến áp suất lốp
+    TirePressureSensor pressureSensor;
+
+    // Quản lý cả hai cảm biến bằng class VehicleSensors
+    VehicleSensors vehicleSensors(tempSensor, pressureSensor);
+    vehicleSensors.displaySensorsInfo();
+
+    return 0;
+}
+```
+
+```
+Sensor 1 Value: 40.5 Celsius
+Sensor 2 Value: 32 PSI
+```
+
+Tham số template không chỉ giới hạn ở các kiểu dữ liệu nguyên thủy mà đối với kiểu dữ liệu class cũng có thể sử dụng được.
+
 </details>
 
+
+<details>
+  <summary><strong> Template Specialization </strong></summary>
+
+  **Template chuyên biệt hóa** (Template Specialization) trong C++ cho phép tùy chỉnh hành vi của template cho **một (hoặc vài) kiểu dữ liệu cụ thể**.
+
+  Cú pháp:
+  ```cpp
+  template <>
+  class name_of_class<data_type>
+  {
+      private:
+          data_type var;
+  }
+  ```
+
+  Có 2 loại chính:
+  
+  **Full specialization** (chuyên biệt hóa hoàn toàn): định nghĩa lại template cho một kiểu cụ thể.
+  
+  **Partial specialization** (chuyên biệt hóa một phần): định nghĩa lại template với một phần tham số cụ thể, phần còn lại vẫn tổng quát (chỉ áp dụng với **class template**, không áp dụng với function template).
+
+Ta có chương trình mẫu như sau:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+// Template tổng quát
+template <typename T>
+void display(T value){
+    cout << "Generic: " << value << endl;
+}
+
+// Chuyên biệt hóa cho kiểu `int`
+template <>
+void display<int>(int value){
+    cout << "Specialized for int: " << value << endl;
+}
+
+// Chuyên biệt hóa cho kiểu `char*`
+template <>
+void display<const char*>(const char* value){
+    cout << "Specialized for string: " << value << endl;
+}
+```
+
+Ta có ba chương trình sẽ để áp dụng cho các kiểu dữ liệu tương ứng. Trong đó ta có một template tổng quát sẽ được gọi cho các kiểu dữ liệu chung mà không được chuyên biệt hóa và hai template được chuyên biệt hóa riêng cho kiểu `int` và kiểu `char*`. Khi sử dụng chuyên biệt hóa bắt buộc phải có template tổng quát. Ta chạy hàm `main` để kiểm tra như sau:
+
+```cpp
+int main(){
+    display(42);        // Sử dụng chuyên biệt hóa cho int
+    display(3.14);      // Sử dụng template tổng quát
+    display("Hello");   // Sử dụng chuyên biệt hóa cho char*
+    return 0;
+}
+```
+
+```
+Specialized for int: 42
+Generic: 3.14
+Specialized for string: Hello
+```
+
+Tùy vào kiểu dữ liệu mà gọi ra các hàm tương ứng với kiểu, khi truyền vào `42` là số nguyên sẽ gọi template chuyên biệt hóa kiểu `int`. Đối với kiểu số thực do không có hàm chuyên biệt hóa nên sẽ gọi tổng quát và với kiểu chuỗi thì sẽ gọi hàm chuyên biệt hóa kiểu `const char*` 
+
+</details>
 
 
 
