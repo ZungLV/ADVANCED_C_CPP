@@ -314,7 +314,96 @@ Specialized for string: Hello
 
 Tùy vào kiểu dữ liệu mà gọi ra các hàm tương ứng với kiểu, khi truyền vào `42` là số nguyên sẽ gọi template chuyên biệt hóa kiểu `int`. Đối với kiểu số thực do không có hàm chuyên biệt hóa nên sẽ gọi tổng quát và với kiểu chuỗi thì sẽ gọi hàm chuyên biệt hóa kiểu `const char*` 
 
+Đối với kiểu ví dụ trên là kiểu chuyên biệt hóa toàn phần, ta có ví dụ về chuyên biệt hóa 1 phần như sau:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+// Template tổng quát
+template<typename T, typename U>
+class MyClass {
+public:
+    void show() {
+        cout << "General template\n";
+    }
+};
+
+// Chuyên biệt hóa 1 phần: khi cả 2 kiểu dữ liệu là giống nhau (T = U)
+template<typename T>
+class MyClass<T, T> {
+public:
+    void show() {
+        cout << "Partial specialization: T = U\n";
+    }
+};
+
+int main() {
+    MyClass<int, double> obj1;
+    obj1.show();  // In: General template
+
+    MyClass<char, char> obj2;
+    obj2.show();  // In: Partial specialization: T = U
+
+    return 0;
+}
+```
+
+```
+General template
+Partial specialization: T = U
+```
+
+Chuyên biệt hóa một phần chỉ có thể áp dụng cho `class`, như ở ví dụ trên ta tạo một chuyên biệt hóa cho bất cứ khi nào tạo đối tượng với kiểu dữ liệu giống nhau.
+
+
 </details>
+
+
+
+
+<details>
+  <summary><strong> Variadic Template </strong></summary>
+
+Variadic Template cho phép bạn tạo các hàm template hoặc lớp template có thể nhận một số lượng tham số không xác định. Điều này giúp bạn viết mã linh hoạt hơn khi làm việc với danh sách tham số có kích thước động.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+// Function Template khi chỉ có một tham số
+template<typename T>
+T sum(T value)
+{
+    return value;
+}
+
+// Function Template sử dụng Variadic Template, ít nhất 2 tham số
+template<typename T, typename... Args>      // template <typename T, typename Args1, typename Args2>
+auto sum(T first, Args... args)             // T first, Args1 args1, Args2 args2, Args3 args3
+{        
+    return first + sum(args...);        
+}
+
+
+int main(int argc, char const *argv[])
+{
+    cout << sum(1, 2, 3.6, 5.7, 40) << endl;
+    return 0;
+}
+```
+
+Ta có:
++  `typename... Args`: Đại diện cho nhiều kiểu tham số tham gia, khi đó `Args... args` có nghĩa là ngoại trừ tham số đầu tiên có kiểu `T` các tham số còn lại sẽ đều có kiểu `Args` (các tham số có thể có kiểu dữ liệu khác nhau).
++  `auto`: Dùng để tự động suy luận kiểu dữ liệu từ biểu thức mà nó khởi tạo hoặc trả về, hàm `sum` tính ra kết quả kiểu gì thì sẽ tự động trả về kiểu đó.
++  `return first + sum(args...);`: Về hàm này nó sẽ lần lượt tính tổng từ tham số cuối đổ về tham số đầu do độ quy hàm `sum` với các tham số còn lại trừ tham số đầu. Khi hàm `sum` chỉ còn một tham số cuối cùng tham gia tức trường hợp `1 + (2 + (3.6 + (5.7 + sum(40) )))`. Khi này chỉ còn tham số `40` trong hàm thì hàm `sum` sẽ tự động gọi hàm tổng kết `T sum(T value)`.
+
+```
+52.3
+```
+
+</details>
+
 
 
 
