@@ -394,7 +394,7 @@ int main(int argc, char const *argv[])
 ```
 
 Ta có:
-+  `typename... Args`: Đại diện cho nhiều kiểu tham số tham gia, khi đó `Args... args` có nghĩa là ngoại trừ tham số đầu tiên có kiểu `T` các tham số còn lại sẽ đều có kiểu `Args` (các tham số có thể có kiểu dữ liệu khác nhau).
++  `typename... Args`: Đại diện cho nhiều kiểu tham số còn lại tham gia, khi đó `Args... args` có nghĩa là ngoại trừ tham số đầu tiên có kiểu `T` các tham số còn lại sẽ đều có kiểu `Args` (các tham số có thể có kiểu dữ liệu khác nhau).
 +  `auto`: Dùng để tự động suy luận kiểu dữ liệu từ biểu thức mà nó khởi tạo hoặc trả về, hàm `sum` tính ra kết quả kiểu gì thì sẽ tự động trả về kiểu đó.
 +  `return first + sum(args...);`: Về hàm này nó sẽ lần lượt tính tổng từ tham số cuối đổ về tham số đầu do độ quy hàm `sum` với các tham số còn lại trừ tham số đầu. Khi hàm `sum` chỉ còn một tham số cuối cùng tham gia tức trường hợp `1 + (2 + (3.6 + (5.7 + sum(40) )))`. Khi này chỉ còn tham số `40` trong hàm thì hàm `sum` sẽ tự động gọi hàm tổng kết `T sum(T value)`.
 
