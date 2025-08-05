@@ -188,6 +188,90 @@ Việc mã hóa như vậy sẽ có ý nghĩa như sau:
 +  `3foo`: Tên hàm "foo" (3 ký tự)
 +  `v`: Không có tham số hay kiểu `void`
 
+</details>
+
+
+<details>
+  <summary><strong> Từ khóa using trong Namespace </strong></summary>
+
+Từ khóa `using` cho phép ta sử dụng các phần tử trong namespace mà không cần phải sử dụng toán tử `::` mỗi khi truy cập.
+Chỉ sử dụng using namespace khi member muốn truy cập đến là **duy nhất**.
+
+Ví dụ ta có chương trình mẫu như sau:
+
+```cpp
+#include <iostream>
+using namespace std;
+namespace A{
+    char *name = (char*)"Anh 20";
+}
+
+namespace B{
+    char *name = (char*)"Anh 21";
+}
+
+using namespace A;
+// using namespace B; // error: ambigious
+
+int main()
+{
+    cout << "Name: " << name << endl;
+    cout << "Name: " << B::name << endl;
+    return 0;
+}
+```
+
+Trong đó:
++  `A` và `B` là hai `namespace` có sự tương đồng nhau. Do đó chỉ có thể sử dụng `using` cho một `namespace`
++  Với `namespace A` sử dụng `using` khi ta chạy chương trình `name` sẽ tự động được hiểu là "A::name". Nếu ta muốn sử dụng `name` của `B` thì phải viết rõ ràng `B::name`
+
+```
+Name: Anh 20
+Name: Anh 21
+```
+
+</details>
+
+
+
+<details>
+  <summary><strong> Namespace tiêu chuẩn (std) </strong></summary>
+
+Một trong những `namespace` quan trọng và phổ biến nhất trong C++ là `std`. Tất cả các thành phần của thư viện chuẩn C++ (như `cout`, `cin`, `vector`, `string`) đều được định nghĩa bên trong `namespace std`.
+
+Ta có ví dụ như sau:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+namespace std{
+    struct{
+        int x;
+        int y;
+    } point;
+
+    void display(){
+        cout << "x = " << point.x << endl;
+        cout << "y = " << point.y << endl;
+    }
+}
+
+int main()
+{  
+    point.x = 10;
+    point.y = 20;
+    display();
+    return 0;
+}
+```
+
+Ta áp dụng tính mở rộng của `namespace` đối với `std` để thêm vào kiểu `struct` và hàm cho `std`. Khi ta gọi các thành phần trong `struct` hay hàm `display()` thì chương trình sẽ mặc định các thành phần và hàm này thuộc `std` thông qua `using namespace std`.
+
+```
+x = 10
+y = 20
+```
 
 
 
@@ -195,7 +279,5 @@ Việc mã hóa như vậy sẽ có ý nghĩa như sau:
 
 
 
-
-
-
 </details>
+
