@@ -145,7 +145,7 @@ Doubly Linked List:
 +  duyệt xuôi: từ node đầu → node cuối: con trỏ **next**
 +  duyệt ngược: từ node cuối → node đầu: con trỏ **prev**
 
-Một số method của list:
+Một số method của `list`:
 +  `push_back()`: thêm node cuối list
 +  `push_front()`: thêm node đầu list
 +  `insert()`: thêm node vị trí bất kỳ
@@ -155,6 +155,210 @@ Một số method của list:
 +  `size()`: trả về kích thước của list
 +  `begin()`: địa chỉ node đầu tiên
 +  `end()`: sau địa chỉ node cuối cùng
+
+Cú pháp khai báo của `list`:
+```cpp
+list<data_type> name;                // Tạo một list rỗng
+list<data_type> name(1,2,3,4,5);     // Tạo list với các phần tử đã được chỉ định trước
+```
+
+Ví dụ minh họa:
+```cpp
+#include <iostream>
+#include <list>
+using namespace std;
+
+void Display(list<int> lst)
+{   
+    // Sử iterator để duyệt qua từng node trong list
+    // Duyệt xuôi
+    list<int>::iterator it;
+    // In ra list ban đầu
+    int i = 0;
+    for (it = lst.begin(); it != lst.end(); it++){
+        cout << "node: " << i++ << ", value: " << *it << endl;
+    }
+
+    cout << "------------------\n";
+}
+
+void RDisplay(list<int> lst)
+{   
+    // Sử reverse iterator để duyệt qua từng node trong list
+    // Duyệt ngược
+    list<int>::reverse_iterator rit;
+    // In ra list ban đầu
+    int i = 0;
+    for (rit = lst.rbegin(); rit != lst.rend(); rit++){
+        cout << "node: " << i++ << ", value: " << *rit << endl;
+    }
+
+    cout << "------------------\n";
+}
+
+int main(int argc, char const *argv[])
+{
+    list<int> lst{10,10,100};   // Tạo list với 3 node đầu tiên
+    Display(lst);
+
+    // Thêm node ở cuối list
+    lst.push_back(1);
+    lst.push_back(3);
+    Display(lst);
+
+    // Thêm node ở đầu list
+    lst.push_front(2);
+    lst.push_front(4);
+
+    // Duyệt xuôi từng phần tử từ đầu list đến cuối list
+    cout << "Duyệt xuôi: " << endl;
+    Display(lst);
+    // Duyệt ngược từng phần tử từ cuối list đến đầu list
+    cout << "Duyệt ngược: " << endl;
+    RDisplay(lst);
+    
+
+    // Sử dụng size để xác định số lượng node
+    cout << "Số lượng node trong list: " << lst.size() << endl;
+
+    return 0;
+}
+```
+
+```
+node: 0, value: 10
+node: 1, value: 10
+node: 2, value: 100
+------------------
+node: 0, value: 10
+node: 1, value: 10
+node: 2, value: 100
+node: 3, value: 1
+node: 4, value: 3
+------------------
+Duyệt xuôi:
+node: 0, value: 4
+node: 1, value: 2
+node: 2, value: 10
+node: 3, value: 10
+node: 4, value: 100
+node: 5, value: 1
+node: 6, value: 3
+------------------
+Duyệt ngược:
+node: 0, value: 3
+node: 1, value: 1
+node: 2, value: 100
+node: 3, value: 10
+node: 4, value: 10
+node: 5, value: 2
+node: 6, value: 4
+------------------
+Số lượng node trong list: 7
+```
+
+`insert()` và `erase()` là các hàm thêm và xóa node vào vị trí mong muốn trong list, để có thể sử dụng `insert()` và `erase()` thì cần phải xác định được đúng vị trí mà cần thêm. Do đó `insert()` và `erase()` thường dùng chung với thao tác duyệt danh sách.
+```cpp
+#include <iostream>
+#include <list>
+using namespace std;
+
+// Hàm thêm node vào vị trí bất kì trong list
+void insert_lst(list<int>& lst, int node_num, int value)
+{
+    // Sử iterator để duyệt qua từng node trong list
+    list<int>::iterator it;
+    // Duyệt rồi thêm vào
+    int i = 0;
+    for (it = lst.begin(); it != lst.end(); it++){
+        if(i == node_num)
+        {
+            lst.insert(it,value);   // insert vào node mà it trỏ vào với giá trị là value
+            return;
+        }
+        i++;
+    }
+}
+
+// Hàm xóa node ở vị trí bất kì trong list
+void erase_lst(list<int>& lst, int node_num)
+{
+    // Sử iterator để duyệt qua từng node trong list
+    list<int>::iterator it;
+    // Duyệt rồi thêm vào
+    int i = 0;
+    for (it = lst.begin(); it != lst.end(); it++){
+        if(i == node_num)
+        {
+            lst.erase(it);   // erase node mà it trỏ vào với giá trị là value
+            return;
+        }
+        i++;
+    }
+}
+
+void Display(list<int> lst)
+{   
+    // Sử iterator để duyệt qua từng node trong list
+    // Duyệt xuôi
+    list<int>::iterator it;
+    // In ra list ban đầu
+    int i = 0;
+    for (it = lst.begin(); it != lst.end(); it++){
+        cout << "node: " << i++ << ", value: " << *it << endl;
+    }
+
+    cout << "------------------\n";
+}
+
+void RDisplay(list<int> lst)
+{   
+    // Sử reverse iterator để duyệt qua từng node trong list
+    // Duyệt ngược
+    list<int>::reverse_iterator rit;
+    // In ra list ban đầu
+    int i = 0;
+    for (rit = lst.rbegin(); rit != lst.rend(); rit++){
+        cout << "node: " << i++ << ", value: " << *rit << endl;
+    }
+
+    cout << "------------------\n";
+}
+
+int main(int argc, char const *argv[])
+{
+    list<int> lst{10,10,100};   // Tạo list với 3 node đầu tiên
+    Display(lst);
+
+    // Thêm node vào vị trí thứ 2
+    insert_lst(lst, 2, 12);
+    Display(lst);
+    // Thêm node vào vị trí thứ 3
+    erase_lst(lst, 3);
+    Display(lst);
+
+    // Sử dụng size để xác định số lượng node
+    cout << "Số lượng node trong list: " << lst.size() << endl;
+
+    return 0;
+}
+```
+
+```
+node: 0, value: 10
+node: 1, value: 10
+node: 2, value: 100
+------------------
+node: 0, value: 10
+node: 1, value: 10
+node: 2, value: 12
+node: 3, value: 100
+------------------
+node: 0, value: 10
+node: 1, value: 10
+node: 2, value: 12
+------------------
+```
 
 </details> 
 
