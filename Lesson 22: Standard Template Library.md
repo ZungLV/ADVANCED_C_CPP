@@ -363,7 +363,107 @@ node: 2, value: 12
 </details> 
 
 
+<details>
+  <summary><strong> map </strong></summary>
 
+Map là một container trong STL của C++, cung cấp một cấu trúc dữ liệu ánh xạ **key-value** (tương tự JSON).
+
+Mỗi phần tử trong `std::map` là một `std::pair<const Key, T>`:
++  **Key** là hằng số (không thể thay đổi sau khi thêm vào **map**).
++  **T** là kiểu dữ liệu của giá trị (**value**).
+
+Đặc điểm chính:
++  Các phần tử được tự động sắp xếp theo thứ tự tăng dần theo key
++  Mỗi key chỉ xuất hiện một lần duy nhất.
++  Key không thể thay đổi sau khi được thêm vào map
+
+Các hàm phổ biến:
++  `map[key] = value`: Chèn hoặc cập nhập
++  `map.at(key)`:  Truy cập an toàn, ném exception nếu không có
++  `map.insert({key, value})`:  Chèn nếu chưa có key
++  `map.find(key)`:  Trả về iterator hoặc `map.end()` nếu không thấy
++  `map.erase(key)`:  Xóa phần tử theo key
++  `map.clear()`:  Xóa toàn bộ
++  `map.size()`:  Trả về số phần tử
++  `map.empty()`:  Kiểm tra rỗng
+
+Các cách khai báo map:
++  Cách 1: Khai báo nhiều cặp key-value cùng lúc:
+```cpp
+map<int, string> m = 
+{
+    {1, "Chó"},
+    {2, "Mèo"}
+};
+```
++  Cách 2: Khai báo từng cặp key-value:
+```cpp
+map<int, string> m;
+m[3] = "Chuột";
+```
+Các cách để duyệt dữ liệu trong `map`:
++  Cách 1: Duyệt các phần tử bằng `auto` và `item`:
+```cpp
+for(const auto &item : m)
+{
+    cout << "key: "     <<  item.first
+         << " value: "   <<  item.second << endl;
+}   
+```
++  Cách 2: Duyệt các phần tử bằng hai biến đại diện cho **key-value**:
+```cpp
+for(const auto &[k,v] : m)
+{
+    cout << "key: "     <<  k
+        << " value: "   <<  v << endl;
+}   
+```
+
+Code minh họa:
+```cpp
+#include <iostream>
+#include <map>
+using namespace std;
+
+
+int main(int argc, char const *argv[])
+{
+    map<int, string> m = 
+    {
+        {10, "Chó"},
+        {1, "Mèo"}
+    };
+
+    m[5] ="Chuột";
+
+    // Cách 1
+    for(const auto &item : m)
+    {
+        cout << "key: "     <<  item.first
+             << " value: "   <<  item.second << endl;
+    }   
+
+    // Cách 2
+    for(const auto &[k,v] : m)
+    {
+        cout << "key: "     <<  k
+            << " value: "   <<  v << endl;
+    }   
+
+    return 0;
+}
+```
+```
+key: 1 value: Mèo
+key: 5 value: Chuột
+key: 10 value: Chó
+key: 1 value: Mèo
+key: 5 value: Chuột
+key: 10 value: Chó
+```
+Mặc dù `key` được khai báo theo thứ tự `10`, `1`, `5` nhưng khi in ra sẽ được sắp xếp theo thứ tự từ bé đến lớn theo giá trị `key`
+
+</details>
 
 
 
