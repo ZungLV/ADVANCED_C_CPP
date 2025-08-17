@@ -463,6 +463,55 @@ key: 10 value: Chó
 ```
 Mặc dù `key` được khai báo theo thứ tự `10`, `1`, `5` nhưng khi in ra sẽ được sắp xếp theo thứ tự từ bé đến lớn theo giá trị `key`
 
+Sử dụng hàm `insert()` và `erase()` để thêm và xóa theo `key`
+```cpp
+#include <iostream>
+#include <map>
+using namespace std;
+
+
+int main(int argc, char const *argv[])
+{
+    map<int, string> m = 
+    {
+        {10, "Chó"},
+        {1, "Mèo"}
+    };
+
+    m[5] ="Chuột";
+
+    for(const auto &item : m)
+    {
+        cout << "key: "     <<  item.first
+             << " value: "   <<  item.second << endl;
+    }
+    cout << "--------------------------" << endl;
+
+    // Thêm key-value nếu chưa có key
+    m.insert({3,"Chim"});
+    // Xóa key-value dựa theo key
+    m.erase(10);
+
+
+    for(const auto &item : m)
+    {
+        cout << "key: "     <<  item.first
+             << " value: "   <<  item.second << endl;
+    }   
+
+    return 0;
+}
+```
+```
+key: 1 value: Mèo
+key: 5 value: Chuột
+key: 10 value: Chó
+--------------------------
+key: 1 value: Mèo
+key: 3 value: Chim
+key: 5 value: Chuột
+```
+
 </details>
 
 
