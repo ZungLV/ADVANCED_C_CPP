@@ -513,16 +513,161 @@ key: 5 value: Chuột
 ```
 
 </details>
-
-
-
-
-
 </details>
 
 
 
 
+
+<details>
+  <summary><strong> Lambda Expression </strong></summary>
+
+**Lambda** là một hàm ẩn danh (**anonymous function**), tức là một hàm không cần tên và có thể khai báo ngay tại nơi cần dùng.
+Cú pháp:
+```cpp
+[capture](parameter_lists) -> return_type
+{
+    // function body
+}
+
+[capture](parameter_lists)
+{
+    // function body
+}
+```
+Trong đó:
+
+📍  **parameter_lists**: danh sách tham số (giống hàm toàn cục).
+
+📍  **return_type**: kiểu trả về (có thể tự động suy diễn, thường không cần ghi rõ).
+
+📍  **{...}**: thân hàm.
+
+📍  **capture**: cho biết cách sử dụng các biến xung quanh lambda:
++  **[<name_variable>]**: truyền giá trị của biến cụ thể sẽ sử dụng.
++  **[=]**: truyền giá trị tất cả các biến xung quanh.
++  **[&<name_variable>]**	: truyền tham chiếu của biến cụ thể
++  **[&]**: truyền tham chiếu của tất cả biến xung quanh
++  Phối hợp các dạng trên.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+
+int main(int argc, char const *argv[])
+{
+    []()
+    {
+        cout << "This is lamda expression" << endl;
+    };
+
+    return 0;
+}
+```
+Ở đấy ta có khai báo một hàm lamda đơn giản và là khai báo cục bộ. Nếu chỉ khai báo không thì không thể sử dụng do đó ta phải tìm cách gọi hàm. Có hai cách để làm điều đó:
++  Cách 1: Lưu trữ lamda vào một biến bất kì
+```cpp
+#include <iostream>
+using namespace std;
+
+
+int main(int argc, char const *argv[])
+{
+    auto l = []()   // Kiểu dữ liệu của l là kiểu void
+    {
+        cout << "This is lamda expression" << endl;
+    };
+
+    l();
+    
+    return 0;
+}
+```
+```
+This is lamda expression
+```
++  Cách 2: Kết hợp với toán tử gọi hàm ngay sau khi khai báo lamda xong
+```cpp
+#include <iostream>
+using namespace std;
+
+
+int main(int argc, char const *argv[])
+{
+    []()    // Kiểu dữ liệu của l là kiểu void
+    {
+        cout << "This is lamda expression" << endl;
+    }();
+
+    return 0;
+}
+```
+```
+This is lamda expression
+```
+
+Các đặc điểm khác của lamda:
+```cpp
+#include <iostream>
+using namespace std;
+
+
+int main(int argc, char const *argv[])
+{
+    int x = 10;
+    int y = 20;
+
+    // bắt theo giá trị (copy)
+    [x]() 
+    {
+        cout << "x in lamda = " << x + 5 << endl;
+    }();
+    cout << "x origin = " << x << endl << "------------------------------" << endl;
+
+    // bắt theo tham chiếu (reference)
+    [&y]() 
+    {
+        y += 5;
+        cout << "y in lamda = " << y + 15 << endl;
+    }();
+    cout << "y origin = " << y << endl << "------------------------------" << endl;
+
+    // bắt tất cả theo giá trị
+    [=]() 
+    {
+        cout << x + y << endl;
+    }();
+    cout << "------------------------------" << endl;
+
+    // bắt tất cả theo tham chiếu
+    [&]() 
+    {
+        x += 1;
+        y += 1;
+        cout << "x in lamda = " << x << endl;
+        cout << "y in lamda = " << y << endl;
+    }();
+    cout << "x origin = " << x << endl; 
+    cout << "y origin = " << y << endl;
+
+}
+```
+```
+x in lamda = 15
+x origin = 10
+------------------------------
+y in lamda = 40
+y origin = 25
+------------------------------
+35
+------------------------------
+x in lamda = 11
+y in lamda = 26
+x origin = 11
+y origin = 26
+```
+</details>
 
 
 
