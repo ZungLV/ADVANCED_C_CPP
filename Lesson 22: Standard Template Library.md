@@ -606,8 +606,9 @@ int main(int argc, char const *argv[])
 ```
 This is lamda expression
 ```
+Đối với cách thứ 2 sẽ không gây tốn bộ nhớ do sau khi gọi hàm xong sẽ được thu hồi ngay.
 
-Các đặc điểm khác của lamda:
+Các đặc điểm khác của lamda khi sử **capture** để thao tác biến:
 ```cpp
 #include <iostream>
 using namespace std;
@@ -621,15 +622,16 @@ int main(int argc, char const *argv[])
     // bắt theo giá trị (copy)
     [x]() 
     {
-        cout << "x in lamda = " << x + 5 << endl;
+        //x += 5;           // Không thể thực hiện do x là chỉ đọc không được thay đổi
+        cout << "x in lamda = " << x << endl;
     }();
     cout << "x origin = " << x << endl << "------------------------------" << endl;
 
     // bắt theo tham chiếu (reference)
     [&y]() 
     {
-        y += 5;
-        cout << "y in lamda = " << y + 15 << endl;
+        y += 5;             // Có thể thay đổi biến y gốc do là truyền tham chiếu
+        cout << "y in lamda = " << y << endl;
     }();
     cout << "y origin = " << y << endl << "------------------------------" << endl;
 
@@ -650,14 +652,14 @@ int main(int argc, char const *argv[])
     }();
     cout << "x origin = " << x << endl; 
     cout << "y origin = " << y << endl;
-
+    return 0;
 }
 ```
 ```
-x in lamda = 15
+x in lamda = 10
 x origin = 10
 ------------------------------
-y in lamda = 40
+y in lamda = 25
 y origin = 25
 ------------------------------
 35
@@ -666,6 +668,58 @@ x in lamda = 11
 y in lamda = 26
 x origin = 11
 y origin = 26
+```
+
+Một ví dụ về vận dụng lamda:
+```cpp
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int main()
+{
+    vector<int> arr = {32, 71, 12, 40, 2, 80, 53, 35};
+
+    vector<int>::iterator it;
+
+    cout << "Initial: ";
+    for (it = arr.begin(); it != arr.end(); it++) 
+        cout << " " << *it;
+    cout << endl;
+
+    // sắp xếp tăng dần
+    sort(arr.begin(), arr.end(), [](int i, int j) -> bool
+    {
+        return i < j;
+    });
+
+    cout << "Increase: ";
+    for (it = arr.begin(); it != arr.end(); it++)
+        cout << " " << *it;
+    cout << endl;
+
+    // sắp xếp giảm dần
+    sort(arr.begin(), arr.end(), [](int i, int j) -> bool
+    {
+        return i > j;
+    });
+
+    cout << "Decrease: ";
+    for (it = arr.begin(); it != arr.end(); it++)
+        cout << " " << *it;
+    return 0;
+}
+```
+Ta có:
++  `[](int i, int j) -> bool`: Là làm lamda kiểu bool sẽ trả về true khi `i < j` khi muốn sắp xếp tăng dần hoặc ngược lại nếu muốn sắp xếp giảm dần.
++  `i` và `j`: Là hai tham số của lamda do việc so sánh cần phải so sánh cả 2 phần tử liền kề nhau nên cần 2 tham số.
++  `sort()`: Hàm này sẽ duyệt qua từng phần tử của vector và sẽ chỉ hoán đổi 2 phần tử liền nhau khi ở điều kiện thứ 3 tức lamda trả về **false**.
++  Do chỉ sử dụng một lần duy nhất trong hàm nên việc dùng lamda là tối ưu vì không chiếm dụng bộ nhớ.
+```
+Initial:  32 71 12 40 2 80 53 35
+Increase:  2 12 32 35 40 53 71 80
+Decrease:  80 71 53 40 35 32 12 2
 ```
 </details>
 
