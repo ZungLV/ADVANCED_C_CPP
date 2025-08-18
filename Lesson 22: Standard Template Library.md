@@ -725,5 +725,168 @@ Decrease:  80 71 53 40 35 32 12 2
 
 
 
+<details>
+  <summary><strong> Functor </strong></summary>
+
+Trong C++, **Functor** (Function Object - Đối tượng hàm) là một đối tượng (object) có thể hoạt động như một hàm. Nói cách khác, functor là một đối tượng của class (struct) có định nghĩa toán tử `operator ()` để có thể gọi ra như một hàm thông thường.
+
+```cpp
+template <typename T1, typename T2>
+class Test
+{
+    public:
+        void operator ()(){}
+
+        void operator ()(T1 x){}
+
+        void operator ()(T1 x, T2 y){}
+};
+```
+
+Đặc điểm của Functor:
++  Là hàm thành viên có quyền truy cập là **public**.
++  Không phải là **static method**.
++  Có khai báo `operator ()`.
+
+```cpp
+#include <iostream>
+using namespace std;
+
+template <typename T1, typename T2>
+class Test
+{
+    public:
+        void operator () ()
+        {
+            cout << "Test" << endl;
+        }
+
+        void operator () (T1 x)
+        {
+            cout << "Test: x = " << x << endl;
+        }
+
+        void operator () (T1 x, T2 y)
+        {
+            cout << "Test: x = " << x << " , y = " << y << endl;
+        }
+};
+
+int main()
+{
+    Test<int, double> test;
+    test();
+    test(3.66);
+    test(10, 30.6);
+    return 0;
+}
+```
+
+Tùy thuộc vào số tham số truyền vào mà sẽ gọi ra `operator ()` tương ứng.
+
+Lưu ý đối với class có constructor khi muốn gọi operator thì cần phải tách biệt với việc khai báo.
+```cpp
+#include <iostream>
+using namespace std;
+
+template <typename T1, typename T2>
+class Test
+{
+    public:
+
+        Test(T1 x)
+        {
+            cout << "Constructor: x = " << x << endl;
+        }
+
+        void operator () ()
+        {
+            cout << "Functor: Test" << endl;
+        }
+
+        void operator () (T1 x)
+        {
+            cout << "Test: x = " << x << endl;
+        }
+
+        void operator () (T1 x, T2 y)
+        {
+            cout << "Test: x = " << x << " , y = " << y << endl;
+        }
+};
+
+int main()
+{
+    Test<int, double> test(1);      //  Constructor
+    test();                         //  Functor
+    return 0;
+}
+```
+```
+Constructor: x = 1
+Functor: Test
+```
+
+Một cách khác sử dụng functor để thay thế lamda trong trường hợp hàm phức tạp:
+
+```cpp
+#include <iostream>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+class Increment
+{
+    private:
+        int num;
+       
+    public:
+        Increment(int &n) : num(n){}
+       
+        int operator () (const int vec_num) const
+        {
+            return num + vec_num;
+        }
+};
+
+int main()
+{
+    vector<int> v = {1, 2, 3, 4, 5};
+   
+    for (const auto &item : v)
+    {
+        cout << item << " ";
+    }
+    cout << endl;
+   
+    int add = 0;
+   
+    while (1)
+    {
+        cout << "Input: ";
+        cin >> add;
+       
+        transform(v.begin(), v.end(), v.begin(), Increment(add));
+   
+        for (const auto &item : v)
+        {
+            cout << item << " ";
+        }
+        cout << endl;
+    }
+
+    return 0;
+}
+```
+Hàm transform sẽ thay đổi toàn bộ phần tử trong vector tương ứng với những gì được ghi trong `Increment`.
+```
+1 2 3 4 5 
+Input: 1
+2 3 4 5 6 
+Input: 2
+4 5 6 7 8 
+```
+
+</details>
 
 </details>
