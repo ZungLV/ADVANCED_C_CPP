@@ -198,7 +198,7 @@ public:
 };
 ```
 
-🌟 **Concrete Subject:**: Giữ các trạng thái của cảm biến như `temperature`, `humidity`, `light` và các phương thức để truy cập và thông báo cho các Observer về sự thay đổi.
+🌟 **Concrete Subject:**: Giữ các trạng thái của cảm biến như `temperature`, `humidity`, `light` và các phương thức để truy cập và thông báo cho các Observer về sự thay đổi. Chứa logic để quản lý danh sách Observer và trạng thái của Subject.
 ```cpp
 class SensorManager {
     float temperature;
@@ -251,7 +251,59 @@ Trong đó:
 
 🔍 `void notifyObservers()`: Gửi thông báo cho toàn bộ các Observer
 
-🌟 **Concrete Observer**:
+🌟 **Concrete Observer**: Là các class kế thừa từ Observer và thực hiện phương thức cập nhật dữ liệu. Các class này sẽ nhận thông báo từ Subject và xử lý thông tin.
+```cpp
+// Display component (an observer)
+class Display : public Observer {
+public:
+    void update(float temperature, float humidity, float light) override {
+       cout << "Display: Temperature: " << temperature
+            << ", Humidity: " << humidity
+            << ", Light: " << light << endl;
+    }
+};
+
+// Logger component (an observer)
+class Logger : public Observer {
+public:
+    void update(float temperature, float humidity, float light) override {
+        cout << "Logging data... Temp: " << temperature
+             << ", Humidity: " << humidity
+             << ", Light: " << light << endl;
+    }
+};
+```
+
+Triển khai trong main:
+
+```cpp
+int main() {
+    SensorManager sensorManager;
+
+    Display display;
+    Logger logger;
+
+    sensorManager.registerObserver(&display);
+    sensorManager.registerObserver(&logger);
+
+    sensorManager.setMeasurements(25.0, 60.0, 700.0); // Simulate sensor data update
+    sensorManager.setMeasurements(26.0, 65.0, 800.0); // Another sensor update
+
+    return 0;
+}
+```
+
++  Khởi tạo hai Observer `display` và `logger`.
++  Đăng kí cho hai Observer trên qua phương thức `registerObserver()`.
++  Mỗi khi thay đổi dữ liệu bằng phương thức `setMeasurements` thì cả 2 Observer trên sẽ đều được thông báo.
+
+Kết quả:
+```
+Display: Temperature: 25, Humidity: 60, Light: 700
+Logging data... Temp: 25, Humidity: 60, Light: 700
+Display: Temperature: 26, Humidity: 65, Light: 800
+Logging data... Temp: 26, Humidity: 65, Light: 800
+```
 
 
 </details>
