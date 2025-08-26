@@ -312,6 +312,255 @@ Logging data... Temp: 26, Humidity: 65, Light: 800
 
 
 
+<details>
+  <summary><strong> Factory Pattern </strong></summary>
+
+**Factory Pattern** là một mẫu thiết kế thuộc nhóm **Creational patterns**, cho phép bạn ẩn đi việc khởi tạo đối tượng cụ thể, thay vào đó cung cấp một **cơ chế chung** để khởi tạo.
+
+Factory Pattern chia làm 3 loại:
++  Simple Factory
++  Factory Method
++  Abstract Factory
+
+
+
+
+<details>
+  <summary><strong> Simple Factory </strong></summary>
+
+**Simple Factory** không khởi tạo trực tiếp các đối tượng mà sử dụng một phương thức hoặc một lớp trung gian (Factory) để quyết định loại đối tượng nào sẽ được khởi tạo dựa trên **tham số đầu vào** hoặc logic cụ thể.
+
+```cpp
+class Create
+{
+  	void createObject(ObjectType type)
+  {
+  	  if (type == “temperature”) → khởi tạo 1 đối tượng là cảm biến nhiệt độ (new Temp())
+  }
+}
+Create create;	create.createObject(“temperature”);
+```
+
+Các thành phần chính:
++  **Product**: interface mà các class con sẽ kế thừa.
++  **Concrete Product**: Các lớp con cụ thể được tạo ra từ Product.
++  **Factory**: Một class hoặc hàm đảm nhiệm việc tạo ra các đối tượng.
+
+<img width="996" height="550" alt="image" src="https://github.com/user-attachments/assets/98654e06-930e-4c7f-9771-79711ce4e640" />
+
+Đặc điểm:
++  **Tính trừu tượng**: Factory Pattern ẩn đi chi tiết về cách các đối tượng được tạo ra, giúp chương trình tách biệt giữa việc khởi tạo đối tượng và việc sử dụng đối tượng đó.
++  **Tính mở rộng**: Factory Pattern giúp hệ thống dễ dàng mở rộng khi cần thêm các lớp con mới mà không làm ảnh hưởng đến mã nguồn hiện có.
++  **Tính linh hoạt**: Khi hệ thống cần thay đổi hoặc thêm mới các đối tượng cụ thể, chúng ta chỉ cần cập nhật factory mà không cần sửa đổi mã nguồn chính.
++  **Giảm sự phụ thuộc**: Factory Pattern giúp mã nguồn giảm sự phụ thuộc vào các lớp cụ thể, từ đó tăng tính module và khả năng tái sử dụng.
+
+Ví dụ minh họa:
+```cpp
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Abstract class
+class Sensor{
+    public:
+        virtual void readData() = 0;
+};
+
+// Temperature class
+class TemperatureSensor : public Sensor{
+    public:
+        void readData() override {
+            cout<<"reading temp data: "<<endl;
+        }
+};
+
+// Humidity class
+class HumiditySensor : public Sensor{
+    public:
+        void readData() override {
+            cout<<"reading humidity data: "<<endl;
+        }
+};
+
+// Factory class (Creator)
+class SensorFactory{
+    public:
+        static Sensor* createSensor(const string& sensorType){
+            if(sensorType == "temp"){
+                return new TemperatureSensor();     // trả về đối tượng TemperatureSensor
+            }
+            else if (sensorType == "humi"){
+                return new HumiditySensor();        // trả về đối tượng PressureSensor
+            }
+            else{
+                return nullptr;                     // trả về con trỏ null
+            }
+        }
+};
+
+
+int main(int argc, char const *argv[])
+{
+    Sensor* sensor = SensorFactory::createSensor("humi");
+    sensor->readData();
+    return 0;
+}
+```
+
+Trong đó:
++  `class Sensor`: Là interface mà các class con (các cảm biến được xác định rõ) sẽ kế thừa.
++  `class TemperatureSensor` và `class HumiditySensor`: Là các lớp con cụ thể được tạo ra từ `class Sensor`.
++  `class SensorFactory`: Là class đảm nhiệm việc tạo ra các đối tượng. Sử dụng phương thức `createSensor` để tạo ra các đối tượng tương ứng với `sensorType`.
+
+Kết quả:
+```
+reading humidity data: 
+```
+
+</details>
+
+
+
+
+
+
+<details>
+  <summary><strong> Factory Method </strong></summary>
+
+**Factory Method** được dùng để tạo đối tượng mà không chỉ định chính xác lớp cụ thể sẽ được tạo ra, thay vào đó để cho các lớp con quyết định lớp nào sẽ được khởi tạo.
+
+Các thành phần chính:
++  **Product**: Giao diện chung cho tất cả object được tạo.
++  **Concrete Product**: Các lớp con cụ thể được tạo ra từ Product.
++  **Creator**: Khai báo phương thức khởi tạo đối tượng.
++  **Concrete Creator**: triển khai phương thức trên để tạo ra đối tượng cụ thể.
+
+<img width="981" height="532" alt="image" src="https://github.com/user-attachments/assets/b6a5f079-77e7-4cda-86bd-9ccefe893ec7" />
+
+Ví dụ minh họa:
+
+```cpp
+#include <iostream>
+using namespace std;
+
+// Interface for Sensor
+class ISensor
+{
+    public:
+        virtual void read_data() = 0;
+};
+
+// Temperature
+class Temperature : public ISensor
+{
+    public:
+        void read_data()
+        {
+            cout << "reading temperature data\n";
+        }
+};
+
+// Pressure
+class Pressure : public ISensor
+{
+    public:
+        void read_data()
+        {
+            cout << "reading pressure data\n";
+        }
+};
+
+// Humidity
+class Humidity : public ISensor
+{
+    public:
+        void read_data()
+        {
+            cout << "reading humidity data\n";
+        }
+};
+
+// Class chứa cơ chế khởi tạo đối tượng
+class SensorFactory
+{
+    public:
+        virtual ISensor* createSensor() = 0;
+};
+
+// Class đảm nhận triển khai đối tượng Temperature
+class TempFactory : public SensorFactory
+{
+    public:
+        ISensor* createSensor()
+        {
+            return new Temperature();
+        }
+};
+
+// Class đảm nhận triển khai đối tượng Pressure
+class PressFactory : public SensorFactory
+{
+    public:
+        ISensor* createSensor()
+        {
+            return new Pressure();
+        }
+};
+
+// Class đảm nhận triển khai đối tượng Humidity
+class HumiFactory : public SensorFactory
+{
+    public:
+        ISensor* createSensor()
+        {
+            return new Humidity();
+        }
+};
+
+int main()
+{
+    SensorFactory *create = new TempFactory();
+    ISensor *sensor = create->createSensor();
+    sensor->read_data();
+
+    create = new PressFactory();
+    sensor = create->createSensor();
+    sensor->read_data();
+
+    return 0;
+}
+```
+
+Trong đó:
++  `class ISensor`: Giao diện chung cho việc khởi tạo các đối tượng sensor.
++  `class Temperature`, `class Pressure` và `class Humidity`: Các lớp con cảm biến cụ thể được tạo bởi `class ISensor`
++  `class SensorFactory`: Là class chứa cơ chế khởi tạo đối tượng.
++  `class TempFactory`, `class PressFactory` và `class HumiFactory`: Là các class dùng để triển khai phương thức khởi tạo đối tượng cụ thể tương ứng với từng class.
+
+Kết quả:
+```
+reading temperature data
+reading pressure data
+```
+
+</details>
+
+
+
+
+
+
+
+
+
+
+</details>
+
+
+
+
+
 
 
 </details>
